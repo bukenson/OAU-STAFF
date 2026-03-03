@@ -26,7 +26,9 @@ const StaffList = () => {
   );
   const [rankFilter, setRankFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [showFilters, setShowFilters] = useState(!!searchParams.get("faculty"));
+  const [showFilters, setShowFilters] = useState(
+    !!searchParams.get("faculty") || initialFilter === "faculty" || initialFilter === "department"
+  );
 
   const { data: allStaff = [], isLoading } = useStaff();
   const { data: faculties = [] } = useFaculties();
