@@ -10,7 +10,7 @@ const StatsSection = () => {
 
   const values = data
     ? [14, data.departments, data.professors, data.totalStaff]
-    : [14, 118, 16, 31];
+    : [14, "—", "—", "—"];
 
   return (
     <section className="bg-stats-bg py-12">
