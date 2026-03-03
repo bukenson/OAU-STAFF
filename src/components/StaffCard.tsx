@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import React, { useState } from "react";
 import { Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 
