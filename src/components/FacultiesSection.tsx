@@ -6,6 +6,7 @@ const faculties = [
   "Art",
   "Basic Medical Sciences",
   "Clinical Sciences",
+  "Computing Science & Engineering",
   "Dentistry",
   "EDM",
   "Education",
