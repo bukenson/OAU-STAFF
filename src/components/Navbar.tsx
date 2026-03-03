@@ -9,7 +9,6 @@ import oauLogo from "@/assets/oaulogo.png";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Staff List", href: "/staff" },
-  { label: "Faculties", href: "#faculties" },
   { label: "OAU Website", href: "https://oauife.edu.ng/", external: true },
 ];
 
