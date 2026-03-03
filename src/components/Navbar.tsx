@@ -50,6 +50,15 @@ const Navbar = () => {
               </Link>
             )
           )}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="text-primary-foreground/80 hover:text-accent transition-colors text-sm font-medium tracking-wide flex items-center gap-1"
+            >
+              <Shield size={14} />
+              Admin
+            </Link>
+          )}
           <Link
             to={user ? "/my-profile" : "/auth"}
             className="inline-flex items-center gap-2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-2 rounded-full hover:bg-accent/90 transition-colors"
