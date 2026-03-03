@@ -19,10 +19,10 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
       <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${heroImage})`, backgroundPosition: "center 40%" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/60 to-primary/90" />
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/70 to-primary/95" />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
         <motion.div
