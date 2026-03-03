@@ -25,7 +25,7 @@ const Navbar = () => {
           <span className="font-display text-lg font-semibold text-primary-foreground tracking-wide">
             Staff Directory
           </span>
-        </a>
+        </Link>
 
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) =>
