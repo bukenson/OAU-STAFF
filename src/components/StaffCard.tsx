@@ -28,17 +28,17 @@ const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
       transition={{ delay: index * 0.05 }}
       className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
-      <div className="relative h-48 bg-muted overflow-hidden">
+      <div className="relative aspect-[3/4] bg-muted overflow-hidden">
         {staff.image ? (
           <img
             src={staff.image}
             alt={staff.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-primary/10">
-            <span className="font-display text-4xl font-bold text-primary/30">
+            <span className="font-display text-5xl font-bold text-primary/30">
               {staff.name.charAt(0)}
             </span>
           </div>
