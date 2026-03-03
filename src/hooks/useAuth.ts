@@ -39,6 +39,11 @@ export function useAuth() {
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user && !isAllowedEmail(session.user.email)) {
         await supabase.auth.signOut();
+        toast({
+          title: "Access Denied",
+          description: "Only @oauife.edu.ng accounts are allowed. Please sign in with your OAU email.",
+          variant: "destructive",
+        });
         setSession(null);
         setUser(null);
         setLoading(false);
