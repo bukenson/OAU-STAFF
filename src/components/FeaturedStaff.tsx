@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import StaffCard, { type StaffMember } from "./StaffCard";
 
 const featuredStaff: StaffMember[] = [
@@ -88,6 +89,15 @@ const FeaturedStaff = () => {
           {featuredStaff.map((staff, i) => (
             <StaffCard key={staff.name} staff={staff} index={i} featured />
           ))}
+        </div>
+
+        <div className="text-center mt-10">
+          <Link
+            to="/staff"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium text-sm hover:bg-primary/90 transition-colors"
+          >
+            View All Staff →
+          </Link>
         </div>
       </div>
     </section>

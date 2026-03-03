@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { label: "Home", href: "#" },
-  { label: "Staff List", href: "#staff" },
+  { label: "Staff List", href: "/staff" },
   { label: "Faculties", href: "#faculties" },
   { label: "OAU Website", href: "https://oauife.edu.ng/", external: true },
 ];
