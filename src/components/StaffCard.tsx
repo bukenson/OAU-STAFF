@@ -1,4 +1,4 @@
-import { useState, memo } from "react";
+import React, { useState } from "react";
 import { Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -19,7 +19,7 @@ interface StaffCardProps {
   featured?: boolean;
 }
 
-const StaffCard = memo(({ staff, featured = false }: StaffCardProps) => {
+const StaffCard = React.memo(({ staff, featured = false }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
 
   const card = (
