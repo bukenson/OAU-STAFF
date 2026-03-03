@@ -37,7 +37,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
             Staff Directory
           </h1>
           <p className="text-primary-foreground/70 text-lg sm:text-xl max-w-2xl mx-auto mb-10 font-light">
-            Find staff by name, faculty, department, and rank across all 13 faculties
+            Find staff by name, faculty, department, and rank across all 14 faculties
           </p>
         </motion.div>
 

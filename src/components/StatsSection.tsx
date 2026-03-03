@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Building2, GitBranch, GraduationCap, Users } from "lucide-react";
 
 const stats = [
-  { icon: Building2, value: 13, label: "Faculties" },
+  { icon: Building2, value: 14, label: "Faculties" },
   { icon: GitBranch, value: 118, label: "Departments" },
   { icon: GraduationCap, value: 16, label: "Professors" },
   { icon: Users, value: 31, label: "Total Staff" },
