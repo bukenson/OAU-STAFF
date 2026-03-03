@@ -12,7 +12,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
-import { Plus, X, Save, LogOut } from "lucide-react";
+import { Plus, X, Save, LogOut, Upload, Camera } from "lucide-react";
 
 const FACULTIES = [
   "Administration", "Agriculture", "Arts", "Basic Medical Sciences",
@@ -54,6 +54,7 @@ const MyProfile = () => {
   const [existingId, setExistingId] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // Temp inputs for array fields
   const [newQualification, setNewQualification] = useState("");
@@ -236,14 +237,58 @@ const MyProfile = () => {
               {/* Profile Photo */}
               <div className="bg-card border border-border rounded-xl p-6 space-y-4">
                 <h2 className="font-display text-lg font-semibold text-card-foreground">Profile Photo</h2>
-                <div className="space-y-2">
-                  <Label htmlFor="image_url">Image URL</Label>
-                  <Input id="image_url" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} placeholder="https://example.com/photo.jpg" />
-                  {form.image_url && (
-                    <div className="w-24 h-24 rounded-xl overflow-hidden border border-border mt-2">
+                <div className="flex items-start gap-6">
+                  <div className="w-28 h-28 rounded-xl overflow-hidden border-2 border-border shrink-0 bg-muted flex items-center justify-center">
+                    {form.image_url ? (
                       <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
-                    </div>
-                  )}
+                    ) : (
+                      <Camera size={32} className="text-muted-foreground/40" />
+                    )}
+                  </div>
+                  <div className="space-y-3 flex-1">
+                    <p className="text-sm text-muted-foreground">Upload a professional photo (JPG, PNG, max 5MB)</p>
+                    <label className="inline-flex items-center gap-2 cursor-pointer bg-secondary text-secondary-foreground text-sm font-medium px-4 py-2 rounded-lg hover:bg-secondary/80 transition-colors">
+                      <Upload size={16} />
+                      {uploading ? "Uploading…" : "Choose Photo"}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="sr-only"
+                        disabled={uploading}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file || !user) return;
+                          if (file.size > 5 * 1024 * 1024) {
+                            toast({ title: "File too large", description: "Max 5MB", variant: "destructive" });
+                            return;
+                          }
+                          setUploading(true);
+                          const ext = file.name.split(".").pop();
+                          const path = `${user.id}/avatar.${ext}`;
+                          const { error } = await supabase.storage
+                            .from("staff-photos")
+                            .upload(path, file, { upsert: true });
+                          if (error) {
+                            toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+                          } else {
+                            const { data: urlData } = supabase.storage.from("staff-photos").getPublicUrl(path);
+                            setForm((f) => ({ ...f, image_url: urlData.publicUrl + "?t=" + Date.now() }));
+                            toast({ title: "Photo uploaded!" });
+                          }
+                          setUploading(false);
+                        }}
+                      />
+                    </label>
+                    {form.image_url && (
+                      <button
+                        type="button"
+                        onClick={() => setForm((f) => ({ ...f, image_url: "" }))}
+                        className="block text-xs text-destructive hover:text-destructive/80"
+                      >
+                        Remove photo
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
