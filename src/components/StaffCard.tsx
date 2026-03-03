@@ -19,7 +19,7 @@ interface StaffCardProps {
   featured?: boolean;
 }
 
-const StaffCard = memo(({ staff, featured = false }: StaffCardProps) => {
+const StaffCard = React.memo(({ staff, featured = false }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
 
   const card = (
