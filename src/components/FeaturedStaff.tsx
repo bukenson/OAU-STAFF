@@ -2,23 +2,11 @@ import { Link } from "react-router-dom";
 import StaffCard from "./StaffCard";
 import { useStaff } from "@/hooks/useStaff";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/carousel";
-import Autoplay from "embla-carousel-autoplay";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 
 const FeaturedStaff = () => {
   const { data: staff, isLoading } = useStaff();
   const featured = (staff ?? []).slice(0, 8);
-
-  const autoplayPlugin = useRef(
-    Autoplay({ delay: 3000, stopOnInteraction: false, stopOnMouseEnter: true })
-  );
 
   return (
     <section id="staff" className="py-20 bg-background">
@@ -34,7 +22,7 @@ const FeaturedStaff = () => {
 
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="bg-card rounded-xl border border-border overflow-hidden">
                 <Skeleton className="aspect-[3/4] w-full" />
                 <div className="p-5 space-y-2">
@@ -46,24 +34,17 @@ const FeaturedStaff = () => {
             ))}
           </div>
         ) : (
-          <Carousel
-            opts={{ align: "start", loop: true }}
-            plugins={[autoplayPlugin.current]}
-            className="w-full"
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            <CarouselContent className="-ml-4">
-              {featured.map((s, i) => (
-                <CarouselItem
-                  key={s.name + i}
-                  className="pl-4 basis-full sm:basis-1/2 lg:basis-1/4"
-                >
-                  <StaffCard staff={s} index={i} featured />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden md:inline-flex -left-5 bg-card border-border text-foreground hover:bg-accent hover:text-accent-foreground" />
-            <CarouselNext className="hidden md:inline-flex -right-5 bg-card border-border text-foreground hover:bg-accent hover:text-accent-foreground" />
-          </Carousel>
+            {featured.map((s, i) => (
+              <StaffCard key={s.id || s.name + i} staff={s} index={i} featured />
+            ))}
+          </motion.div>
         )}
 
         <div className="text-center mt-10">
