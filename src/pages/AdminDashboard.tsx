@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StaffForm from "@/components/admin/StaffForm";
+import RoleManager from "@/components/admin/RoleManager";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -43,6 +44,7 @@ const AdminDashboard = () => {
   const [editing, setEditing] = useState<StaffRow | null | "new">(null);
   const [deleteTarget, setDeleteTarget] = useState<StaffRow | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [activeTab, setActiveTab] = useState<"staff" | "roles">("staff");
 
   const { data: staff = [], isLoading } = useQuery({
     queryKey: ["admin-staff"],
@@ -119,15 +121,39 @@ const AdminDashboard = () => {
             <Shield size={20} className="text-accent" />
             <p className="text-accent font-medium tracking-[0.2em] uppercase text-sm">Admin</p>
           </div>
-          <h1 className="font-display text-3xl font-bold text-primary-foreground">
-            Staff Management
+          <h1 className="font-display text-3xl font-bold text-primary-foreground mb-4">
+            Admin Dashboard
           </h1>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setActiveTab("staff")}
+              className={`text-sm font-medium pb-2 border-b-2 transition-colors ${
+                activeTab === "staff"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-primary-foreground/60 hover:text-primary-foreground/80"
+              }`}
+            >
+              Staff Management
+            </button>
+            <button
+              onClick={() => setActiveTab("roles")}
+              className={`text-sm font-medium pb-2 border-b-2 transition-colors ${
+                activeTab === "roles"
+                  ? "border-accent text-accent"
+                  : "border-transparent text-primary-foreground/60 hover:text-primary-foreground/80"
+              }`}
+            >
+              Admin Roles
+            </button>
+          </div>
         </div>
       </section>
 
       <section className="flex-1 py-8 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {editing ? (
+          {activeTab === "roles" ? (
+            <RoleManager currentUserId={user.id} />
+          ) : editing ? (
             <div className="bg-card rounded-xl border border-border p-6">
               <StaffForm
                 staff={editing === "new" ? null : {
