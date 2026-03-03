@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const faculties = [
   "Agriculture",
@@ -33,26 +34,29 @@ const FacultiesSection = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {faculties.map((faculty, i) => (
-            <motion.a
+            <motion.div
               key={faculty}
-              href="#"
               initial={{ opacity: 0, x: -10 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.03 }}
-              className="group flex items-center justify-between bg-card border border-border rounded-lg px-5 py-4 hover:border-accent/50 hover:shadow-md transition-all duration-300"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-accent" />
-                <span className="font-medium text-foreground group-hover:text-primary transition-colors">
-                  Faculty of {faculty}
-                </span>
-              </div>
-              <ChevronRight
-                size={18}
-                className="text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all"
-              />
-            </motion.a>
+              <Link
+                to={`/staff?faculty=${encodeURIComponent(faculty)}`}
+                className="group flex items-center justify-between bg-card border border-border rounded-lg px-5 py-4 hover:border-accent/50 hover:shadow-md transition-all duration-300"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-accent" />
+                  <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                    Faculty of {faculty}
+                  </span>
+                </div>
+                <ChevronRight
+                  size={18}
+                  className="text-muted-foreground group-hover:text-accent group-hover:translate-x-1 transition-all"
+                />
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>

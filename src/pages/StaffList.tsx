@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Search, Filter, X, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -10,12 +11,13 @@ import { useStaff, useFaculties, useDepartments, useRanks } from "@/hooks/useSta
 const ITEMS_PER_PAGE = 12;
 
 const StaffList = () => {
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
-  const [facultyFilter, setFacultyFilter] = useState("");
+  const [facultyFilter, setFacultyFilter] = useState(searchParams.get("faculty") || "");
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [rankFilter, setRankFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(!!searchParams.get("faculty"));
 
   const { data: allStaff = [], isLoading } = useStaff();
   const { data: faculties = [] } = useFaculties();
