@@ -99,3 +99,21 @@ export function useStaffStats() {
     },
   });
 }
+
+export function useStaffProfile(id: string | undefined) {
+  return useQuery({
+    queryKey: ["staff-profile", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const { data, error } = await supabase
+        .from("staff_members")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+}
