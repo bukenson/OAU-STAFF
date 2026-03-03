@@ -151,7 +151,9 @@ const AdminDashboard = () => {
 
       <section className="flex-1 py-8 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {editing ? (
+          {activeTab === "roles" ? (
+            <RoleManager currentUserId={user.id} />
+          ) : editing ? (
             <div className="bg-card rounded-xl border border-border p-6">
               <StaffForm
                 staff={editing === "new" ? null : {
