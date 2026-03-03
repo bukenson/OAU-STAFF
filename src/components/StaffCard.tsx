@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
