@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -20,6 +21,8 @@ interface StaffCardProps {
 }
 
 const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
+  const [imgError, setImgError] = useState(false);
+
   const card = (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -29,12 +32,13 @@ const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
       className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
-        {staff.image ? (
+        {staff.image && !imgError ? (
           <img
             src={staff.image}
             alt={staff.name}
             className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-primary/10">
