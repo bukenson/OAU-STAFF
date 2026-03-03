@@ -49,9 +49,7 @@ const Auth = () => {
         >
           <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
             <div className="text-center mb-8">
-              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center mx-auto mb-4">
-                <span className="font-display font-bold text-primary-foreground text-base">OAU</span>
-              </div>
+              <img src={oauLogo} alt="OAU Logo" className="w-16 h-16 object-contain mx-auto mb-4" />
               <h1 className="font-display text-2xl font-bold text-card-foreground">
                 OAU Staff Directory
               </h1>
