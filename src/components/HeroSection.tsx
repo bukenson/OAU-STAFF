@@ -16,13 +16,20 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
     onSearch(query, filter);
   };
 
-  return (
+    const { scrollY } = useScroll();
+    const bgY = useTransform(scrollY, [0, 600], [0, 150]);
+    const overlayOpacity = useTransform(scrollY, [0, 400], [0.85, 1]);
+
+    return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-      <div
+      <motion.div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})`, backgroundPosition: "center 40%" }}
+        style={{ backgroundImage: `url(${heroImage})`, backgroundPosition: "center 40%", y: bgY }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/70 to-primary/95" />
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/70 to-primary/95"
+        style={{ opacity: overlayOpacity }}
+      />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
         <motion.div
