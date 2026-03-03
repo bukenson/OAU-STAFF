@@ -9,7 +9,7 @@ const StatsSection = () => {
   const { data } = useStaffStats();
 
   const values = data
-    ? [data.faculties, data.departments, data.professors, data.totalStaff]
+    ? [14, data.departments, data.professors, data.totalStaff]
     : [14, 118, 16, 31];
 
   return (
