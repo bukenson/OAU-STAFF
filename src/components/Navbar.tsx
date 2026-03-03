@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Menu, X, UserPlus } from "lucide-react";
+import { Menu, X, UserPlus, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsAdmin } from "@/hooks/useAdmin";
 import oauLogo from "@/assets/oaulogo.png";
 
 const navLinks = [
@@ -15,6 +16,7 @@ const navLinks = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
+  const { data: isAdmin } = useIsAdmin();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md border-b border-primary-foreground/10">
@@ -47,6 +49,15 @@ const Navbar = () => {
                 {link.label}
               </Link>
             )
+          )}
+          {isAdmin && (
+            <Link
+              to="/admin"
+              className="text-primary-foreground/80 hover:text-accent transition-colors text-sm font-medium tracking-wide flex items-center gap-1"
+            >
+              <Shield size={14} />
+              Admin
+            </Link>
           )}
           <Link
             to={user ? "/my-profile" : "/auth"}
@@ -97,6 +108,16 @@ const Navbar = () => {
                     {link.label}
                   </Link>
                 )
+              )}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 text-primary-foreground/80 hover:text-accent transition-colors text-sm font-medium py-2"
+                >
+                  <Shield size={14} />
+                  Admin
+                </Link>
               )}
               <Link
                 to={user ? "/my-profile" : "/auth"}
