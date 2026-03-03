@@ -69,9 +69,12 @@ const Footer = () => {
           ))}
         </div>
 
-        <div className="border-t border-primary-foreground/10 mt-12 pt-8 text-center">
+        <div className="border-t border-primary-foreground/10 mt-12 pt-8 text-center space-y-1">
           <p className="text-primary-foreground/40 text-sm">
             © {new Date().getFullYear()} Obafemi Awolowo University. All rights reserved.
+          </p>
+          <p className="text-primary-foreground/30 text-xs">
+            Designed by <span className="text-accent font-medium">INTECU WEB TEAM</span>
           </p>
         </div>
       </div>
