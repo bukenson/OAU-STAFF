@@ -45,13 +45,29 @@ export default function RoleManager({ currentUserId }: { currentUserId: string }
       return;
     }
     setAdding(true);
-    const { data, error } = await supabase.functions.invoke("manage-admins", {
-      method: "POST",
-      body: { email: trimmed },
-    });
-    setAdding(false);
-    if (error || data?.error) {
-      toast({ title: "Error", description: data?.error || error?.message || "Failed to add admin", variant: "destructive" });
+    try {
+      const session = (await supabase.auth.getSession()).data.session;
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-admins`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ email: trimmed }),
+        }
+      );
+      const data = await response.json();
+      setAdding(false);
+      if (!response.ok) {
+        toast({ title: "Error", description: data?.error || "Failed to add admin", variant: "destructive" });
+        return;
+      }
+    } catch (err: any) {
+      setAdding(false);
+      toast({ title: "Error", description: err.message || "Failed to add admin", variant: "destructive" });
       return;
     }
     toast({ title: "Admin added", description: `${trimmed} is now an admin.` });
