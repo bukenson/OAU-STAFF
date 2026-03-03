@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { Mail, Phone } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export interface StaffMember {
+  id?: string;
   name: string;
   faculty: string;
   department: string;
@@ -18,7 +20,8 @@ interface StaffCardProps {
 }
 
 const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
-  return (
+  const cardContent = (
+    <motion.div
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}

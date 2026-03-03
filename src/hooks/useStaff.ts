@@ -11,6 +11,7 @@ async function fetchStaff(): Promise<StaffMember[]> {
   if (error) throw error;
 
   return (data ?? []).map((row) => ({
+    id: row.id,
     name: row.name,
     faculty: row.faculty,
     department: row.department,
