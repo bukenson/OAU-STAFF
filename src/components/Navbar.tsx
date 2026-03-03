@@ -3,6 +3,7 @@ import { Menu, X, UserPlus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import oauLogo from "@/assets/oaulogo.png";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -19,9 +20,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-primary/95 backdrop-blur-md border-b border-primary-foreground/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center font-display font-bold text-accent-foreground text-sm">
-            OAU
-          </div>
+          <img src={oauLogo} alt="OAU Logo" className="w-9 h-9 object-contain" />
           <span className="font-display text-lg font-semibold text-primary-foreground tracking-wide">
             Staff Directory
           </span>

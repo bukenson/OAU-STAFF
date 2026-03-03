@@ -1,3 +1,5 @@
+import oauLogo from "@/assets/oaulogo.png";
+
 const footerLinks = [
   {
     title: "University",
@@ -35,9 +37,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center font-display font-bold text-accent-foreground text-sm">
-                OAU
-              </div>
+              <img src={oauLogo} alt="OAU Logo" className="w-10 h-10 object-contain" />
               <span className="font-display text-lg font-semibold tracking-wide">
                 Staff Directory
               </span>
