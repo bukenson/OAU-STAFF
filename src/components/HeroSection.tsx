@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import heroImage from "@/assets/oau-campus-hero.jpg";
 
@@ -83,6 +83,14 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
           </div>
         </motion.form>
       </div>
+
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        animate={{ y: [0, 10, 0] }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <ChevronDown size={28} className="text-primary-foreground/50" />
+      </motion.div>
     </section>
   );
 };
