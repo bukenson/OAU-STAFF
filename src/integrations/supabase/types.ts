@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       staff_members: {
         Row: {
+          bio: string | null
           created_at: string
           department: string
           email: string | null
@@ -23,11 +24,16 @@ export type Database = {
           id: string
           image_url: string | null
           name: string
+          office_location: string | null
           phone: string | null
+          publications: string[] | null
+          qualifications: string[] | null
           rank: string | null
+          research_interests: string[] | null
           updated_at: string
         }
         Insert: {
+          bio?: string | null
           created_at?: string
           department: string
           email?: string | null
@@ -35,11 +41,16 @@ export type Database = {
           id?: string
           image_url?: string | null
           name: string
+          office_location?: string | null
           phone?: string | null
+          publications?: string[] | null
+          qualifications?: string[] | null
           rank?: string | null
+          research_interests?: string[] | null
           updated_at?: string
         }
         Update: {
+          bio?: string | null
           created_at?: string
           department?: string
           email?: string | null
@@ -47,8 +58,12 @@ export type Database = {
           id?: string
           image_url?: string | null
           name?: string
+          office_location?: string | null
           phone?: string | null
+          publications?: string[] | null
+          qualifications?: string[] | null
           rank?: string | null
+          research_interests?: string[] | null
           updated_at?: string
         }
         Relationships: []

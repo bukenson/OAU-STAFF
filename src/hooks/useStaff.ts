@@ -11,6 +11,7 @@ async function fetchStaff(): Promise<StaffMember[]> {
   if (error) throw error;
 
   return (data ?? []).map((row) => ({
+    id: row.id,
     name: row.name,
     faculty: row.faculty,
     department: row.department,
@@ -97,5 +98,23 @@ export function useStaffStats() {
         totalStaff: totalStaff ?? 0,
       };
     },
+  });
+}
+
+export function useStaffProfile(id: string | undefined) {
+  return useQuery({
+    queryKey: ["staff-profile", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const { data, error } = await supabase
+        .from("staff_members")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
   });
 }

@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { Mail, Phone } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export interface StaffMember {
+  id?: string;
   name: string;
   faculty: string;
   department: string;
@@ -18,15 +20,13 @@ interface StaffCardProps {
 }
 
 const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
-  return (
+  const card = (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: index * 0.05 }}
-      className={`group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${
-        featured ? "" : ""
-      }`}
+      className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
       <div className="relative h-48 bg-muted overflow-hidden">
         {staff.image ? (
@@ -60,28 +60,32 @@ const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
         {featured && (
           <div className="space-y-2 pt-3 border-t border-border">
             {staff.email && (
-              <a
-                href={`mailto:${staff.email}`}
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
-              >
+              <span className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Mail size={14} />
                 <span className="truncate">{staff.email}</span>
-              </a>
+              </span>
             )}
             {staff.phone && (
-              <a
-                href={`tel:${staff.phone}`}
-                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
-              >
+              <span className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Phone size={14} />
                 <span>{staff.phone}</span>
-              </a>
+              </span>
             )}
           </div>
         )}
       </div>
     </motion.div>
   );
+
+  if (staff.id) {
+    return (
+      <Link to={`/staff/${staff.id}`} className="block">
+        {card}
+      </Link>
+    );
+  }
+
+  return card;
 };
 
 export default StaffCard;
