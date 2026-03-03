@@ -31,6 +31,7 @@ export type Database = {
           rank: string | null
           research_interests: string[] | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           bio?: string | null
@@ -48,6 +49,7 @@ export type Database = {
           rank?: string | null
           research_interests?: string[] | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           bio?: string | null
@@ -65,6 +67,7 @@ export type Database = {
           rank?: string | null
           research_interests?: string[] | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
