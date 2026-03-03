@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, memo } from "react";
 import { Mail, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -20,17 +19,11 @@ interface StaffCardProps {
   featured?: boolean;
 }
 
-const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
+const StaffCard = memo(({ staff, featured = false }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
 
   const card = (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.05 }}
-      className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-    >
+    <div className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
         {staff.image && !imgError ? (
           <img
@@ -78,7 +71,7 @@ const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 
   if (staff.id) {
@@ -90,6 +83,8 @@ const StaffCard = ({ staff, index, featured = false }: StaffCardProps) => {
   }
 
   return card;
-};
+});
+
+StaffCard.displayName = "StaffCard";
 
 export default StaffCard;

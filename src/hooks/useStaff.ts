@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { StaffMember } from "@/components/StaffCard";
 
+const STALE_TIME = 5 * 60 * 1000; // 5 minutes
+
 async function fetchStaff(): Promise<StaffMember[]> {
   const { data, error } = await supabase
     .from("staff_members")
@@ -22,81 +24,56 @@ async function fetchStaff(): Promise<StaffMember[]> {
   }));
 }
 
-async function fetchFaculties(): Promise<string[]> {
-  const { data, error } = await supabase
-    .from("staff_members")
-    .select("faculty")
-    .order("faculty");
-
-  if (error) throw error;
-
-  return [...new Set((data ?? []).map((r) => r.faculty))];
-}
-
-async function fetchDepartments(): Promise<string[]> {
-  const { data, error } = await supabase
-    .from("staff_members")
-    .select("department")
-    .order("department");
-
-  if (error) throw error;
-
-  return [...new Set((data ?? []).map((r) => r.department))];
-}
-
-async function fetchRanks(): Promise<string[]> {
-  const { data, error } = await supabase
-    .from("staff_members")
-    .select("rank")
-    .not("rank", "is", null)
-    .order("rank");
-
-  if (error) throw error;
-
-  return [...new Set((data ?? []).map((r) => r.rank).filter(Boolean))] as string[];
-}
-
 export function useStaff() {
-  return useQuery({ queryKey: ["staff"], queryFn: fetchStaff });
+  return useQuery({
+    queryKey: ["staff"],
+    queryFn: fetchStaff,
+    staleTime: STALE_TIME,
+  });
 }
 
+/** Derive faculties from already-fetched staff data — no extra query */
 export function useFaculties() {
-  return useQuery({ queryKey: ["faculties"], queryFn: fetchFaculties });
+  const { data: staff } = useStaff();
+  return {
+    data: staff
+      ? [...new Set(staff.map((s) => s.faculty))].sort()
+      : [],
+  };
 }
 
+/** Derive departments from already-fetched staff data — no extra query */
 export function useDepartments() {
-  return useQuery({ queryKey: ["departments"], queryFn: fetchDepartments });
+  const { data: staff } = useStaff();
+  return {
+    data: staff
+      ? [...new Set(staff.map((s) => s.department))].sort()
+      : [],
+  };
 }
 
+/** Derive ranks from already-fetched staff data — no extra query */
 export function useRanks() {
-  return useQuery({ queryKey: ["ranks"], queryFn: fetchRanks });
+  const { data: staff } = useStaff();
+  return {
+    data: staff
+      ? [...new Set(staff.map((s) => s.status).filter(Boolean))].sort() as string[]
+      : [],
+  };
 }
 
 export function useStaffStats() {
   return useQuery({
     queryKey: ["staff-stats"],
+    staleTime: STALE_TIME,
     queryFn: async () => {
-      const [
-        { count: totalStaff },
-        facultiesData,
-        departmentsData,
-        { count: professors },
-      ] = await Promise.all([
-        supabase.from("staff_members").select("*", { count: "exact", head: true }),
-        supabase.from("staff_members").select("faculty"),
-        supabase.from("staff_members").select("department"),
-        supabase.from("staff_members").select("*", { count: "exact", head: true }).eq("rank", "Professor"),
-      ]);
+      const { count, error } = await supabase
+        .from("staff_members")
+        .select("*", { count: "exact", head: true });
 
-      const uniqueFaculties = new Set((facultiesData.data ?? []).map((r) => r.faculty)).size;
-      const uniqueDepartments = new Set((departmentsData.data ?? []).map((r) => r.department)).size;
+      if (error) throw error;
 
-      return {
-        faculties: uniqueFaculties,
-        departments: uniqueDepartments,
-        professors: professors ?? 0,
-        totalStaff: totalStaff ?? 0,
-      };
+      return { totalStaff: count ?? 0 };
     },
   });
 }
@@ -104,6 +81,7 @@ export function useStaffStats() {
 export function useStaffProfile(id: string | undefined) {
   return useQuery({
     queryKey: ["staff-profile", id],
+    staleTime: STALE_TIME,
     queryFn: async () => {
       if (!id) return null;
       const { data, error } = await supabase
