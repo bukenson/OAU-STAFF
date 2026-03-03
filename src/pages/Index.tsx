@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import StatsSection from "@/components/StatsSection";
@@ -5,8 +6,13 @@ import FeaturedStaff from "@/components/FeaturedStaff";
 import Footer from "@/components/Footer";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   const handleSearch = (query: string, filter: string) => {
-    console.log("Search:", query, "Filter:", filter);
+    const params = new URLSearchParams();
+    if (query) params.set("q", query);
+    if (filter && filter !== "all") params.set("filter", filter);
+    navigate(`/staff?${params.toString()}`);
   };
 
   return (
