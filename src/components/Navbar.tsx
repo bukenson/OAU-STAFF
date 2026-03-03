@@ -109,6 +109,16 @@ const Navbar = () => {
                   </Link>
                 )
               )}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 text-primary-foreground/80 hover:text-accent transition-colors text-sm font-medium py-2"
+                >
+                  <Shield size={14} />
+                  Admin
+                </Link>
+              )}
               <Link
                 to={user ? "/my-profile" : "/auth"}
                 onClick={() => setOpen(false)}
