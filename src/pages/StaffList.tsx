@@ -12,8 +12,12 @@ const ITEMS_PER_PAGE = 12;
 
 const StaffList = () => {
   const [searchParams] = useSearchParams();
-  const [search, setSearch] = useState("");
-  const [facultyFilter, setFacultyFilter] = useState(searchParams.get("faculty") || "");
+  const initialQuery = searchParams.get("q") || "";
+  const initialFilter = searchParams.get("filter") || "";
+  const [search, setSearch] = useState(initialQuery || "");
+  const [facultyFilter, setFacultyFilter] = useState(
+    initialFilter === "faculty" ? "" : searchParams.get("faculty") || ""
+  );
   const [departmentFilter, setDepartmentFilter] = useState("");
   const [rankFilter, setRankFilter] = useState("");
   const [page, setPage] = useState(1);
