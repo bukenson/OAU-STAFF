@@ -6,7 +6,12 @@ import { motion } from "framer-motion";
 
 const FeaturedStaff = () => {
   const { data: staff, isLoading } = useStaff();
-  const featured = (staff ?? []).slice(0, 8);
+  const sorted = (staff ?? []).sort((a, b) => {
+    const aHas = a.image ? 0 : 1;
+    const bHas = b.image ? 0 : 1;
+    return aHas - bHas;
+  });
+  const featured = sorted.slice(0, 8);
 
   return (
     <section id="staff" className="py-20 bg-background">
