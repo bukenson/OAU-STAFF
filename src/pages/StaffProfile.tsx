@@ -11,6 +11,13 @@ import { Button } from "@/components/ui/button";
 const StaffProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: staff, isLoading, error } = useStaffProfile(id);
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  // Determine if the logged-in user owns this profile
+  const isOwner = user && staff?.user_id === user.id;
+  // Show claim button if: profile has no user_id, user is not logged in or logged in but doesn't own it
+  const canClaim = staff && !staff.user_id && !isOwner;
 
   return (
     <div className="min-h-screen flex flex-col">
