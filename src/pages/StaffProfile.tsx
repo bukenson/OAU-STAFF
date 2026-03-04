@@ -91,6 +91,29 @@ const StaffProfile = () => {
                     {staff.office_location}
                   </p>
                 )}
+                {/* Claim / Edit button */}
+                {isOwner && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="mt-4"
+                    onClick={() => navigate("/my-profile")}
+                  >
+                    <Pencil size={14} />
+                    Edit Your Profile
+                  </Button>
+                )}
+                {canClaim && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="mt-4"
+                    onClick={() => navigate("/auth")}
+                  >
+                    <LogIn size={14} />
+                    Is this you? Claim this profile
+                  </Button>
+                )}
               </div>
             </motion.div>
           )}
