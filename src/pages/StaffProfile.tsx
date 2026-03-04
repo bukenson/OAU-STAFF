@@ -1,10 +1,12 @@
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Mail, Phone, MapPin, GraduationCap, BookOpen, FlaskConical } from "lucide-react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Mail, Phone, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useStaffProfile } from "@/hooks/useStaff";
+import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 const StaffProfile = () => {
   const { id } = useParams<{ id: string }>();
