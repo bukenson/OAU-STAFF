@@ -103,17 +103,7 @@ const StaffProfile = () => {
                     Edit Your Profile
                   </Button>
                 )}
-                {canClaim && (
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="mt-4"
-                    onClick={() => navigate("/auth")}
-                  >
-                    <LogIn size={14} />
-                    Is this you? Claim this profile
-                  </Button>
-                )}
+                {/* Claim button hidden for now */}
               </div>
             </motion.div>
           )}
