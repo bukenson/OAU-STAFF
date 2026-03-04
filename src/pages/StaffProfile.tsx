@@ -1,14 +1,23 @@
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Mail, Phone, MapPin, GraduationCap, BookOpen, FlaskConical } from "lucide-react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Mail, Phone, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useStaffProfile } from "@/hooks/useStaff";
+import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 const StaffProfile = () => {
   const { id } = useParams<{ id: string }>();
   const { data: staff, isLoading, error } = useStaffProfile(id);
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  // Determine if the logged-in user owns this profile
+  const isOwner = user && staff?.user_id === user.id;
+  // Show claim button if: profile has no user_id, user is not logged in or logged in but doesn't own it
+  const canClaim = staff && !staff.user_id && !isOwner;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -81,6 +90,29 @@ const StaffProfile = () => {
                     <MapPin size={14} />
                     {staff.office_location}
                   </p>
+                )}
+                {/* Claim / Edit button */}
+                {isOwner && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="mt-4"
+                    onClick={() => navigate("/my-profile")}
+                  >
+                    <Pencil size={14} />
+                    Edit Your Profile
+                  </Button>
+                )}
+                {canClaim && (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="mt-4"
+                    onClick={() => navigate("/auth")}
+                  >
+                    <LogIn size={14} />
+                    Is this you? Claim this profile
+                  </Button>
                 )}
               </div>
             </motion.div>
