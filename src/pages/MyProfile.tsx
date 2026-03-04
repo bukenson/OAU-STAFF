@@ -153,14 +153,12 @@ const MyProfile = () => {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        <div className="flex-1 pt-24 pb-16 max-w-3xl mx-auto px-4 w-full">
-          <Skeleton className="h-10 w-1/3 mb-6" />
-          <div className="space-y-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full" />
-            ))}
+        <section className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <p className="text-muted-foreground text-sm">Loading your profile…</p>
           </div>
-        </div>
+        </section>
         <Footer />
       </div>
     );
