@@ -77,24 +77,20 @@ const MyProfile = () => {
         .eq("user_id", user.id)
         .maybeSingle();
 
-      // If no linked profile, try to claim one by matching email
+      // If no linked profile, try to claim one via edge function (bypasses RLS)
       if (!data && user.email) {
-        const { data: emailMatch } = await supabase
-          .from("staff_members")
-          .select("*")
-          .eq("email", user.email)
-          .is("user_id", null)
-          .maybeSingle();
+        const { data: claimResult, error: claimError } = await supabase.functions.invoke("claim-profile");
 
-        if (emailMatch) {
-          // Claim the profile by setting user_id
-          const { error } = await supabase
+        if (!claimError && claimResult?.claimed) {
+          // Re-fetch the now-linked profile
+          const { data: claimed } = await supabase
             .from("staff_members")
-            .update({ user_id: user.id })
-            .eq("id", emailMatch.id);
+            .select("*")
+            .eq("id", claimResult.id)
+            .single();
 
-          if (!error) {
-            data = { ...emailMatch, user_id: user.id };
+          if (claimed) {
+            data = claimed;
             toast({
               title: "Profile found!",
               description: "Your existing staff profile has been linked to your account.",
