@@ -70,11 +70,38 @@ const MyProfile = () => {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const { data } = await supabase
+      // First, try to find a profile already linked to this user
+      let { data } = await supabase
         .from("staff_members")
         .select("*")
         .eq("user_id", user.id)
         .maybeSingle();
+
+      // If no linked profile, try to claim one by matching email
+      if (!data && user.email) {
+        const { data: emailMatch } = await supabase
+          .from("staff_members")
+          .select("*")
+          .eq("email", user.email)
+          .is("user_id", null)
+          .maybeSingle();
+
+        if (emailMatch) {
+          // Claim the profile by setting user_id
+          const { error } = await supabase
+            .from("staff_members")
+            .update({ user_id: user.id })
+            .eq("id", emailMatch.id);
+
+          if (!error) {
+            data = { ...emailMatch, user_id: user.id };
+            toast({
+              title: "Profile found!",
+              description: "Your existing staff profile has been linked to your account.",
+            });
+          }
+        }
+      }
 
       if (data) {
         setExistingId(data.id);
