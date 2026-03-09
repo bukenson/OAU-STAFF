@@ -51,9 +51,27 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
           {staff.name}
         </h3>
         <p className="text-sm text-accent font-medium mb-2">{staff.faculty}</p>
-        <p className="text-sm text-muted-foreground mb-4">{staff.department}</p>
+        <p className="text-sm text-muted-foreground mb-3">{staff.department}</p>
 
-        <div className="space-y-2 pt-3 border-t border-border">
+        {staff.research_interests && staff.research_interests.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {staff.research_interests.slice(0, 3).map((interest) => (
+              <span
+                key={interest}
+                className="bg-accent/10 text-accent text-[10px] font-medium px-2 py-0.5 rounded-full leading-tight"
+              >
+                {interest}
+              </span>
+            ))}
+            {staff.research_interests.length > 3 && (
+              <span className="text-muted-foreground text-[10px] font-medium px-1.5 py-0.5">
+                +{staff.research_interests.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+
+        <div className="pt-3 border-t border-border">
           {staff.email && (
             <span className="flex items-center gap-2 text-xs text-muted-foreground">
               <Mail size={14} />
