@@ -23,7 +23,8 @@ interface StaffFormData {
 
 const EMPTY_FORM: StaffFormData = {
   name: "", faculty: "", department: "", rank: "",
-  email: "", phone: "", offn: "", bio: ""cations: [], research_interests: [], publications: [], image_url: "",
+  email: "", office_location: "", bio: "",
+  qualifications: [], research_interests: [], publications: [], image_url: "",
 };
 
 interface StaffFormProps {
