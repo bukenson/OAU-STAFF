@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Mail } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export interface StaffMember {
@@ -20,6 +21,7 @@ interface StaffCardProps {
 
 const StaffCard = React.memo(({ staff }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
+  const navigate = useNavigate();
 
   const card = (
     <div className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -56,12 +58,17 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
         {staff.research_interests && staff.research_interests.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {staff.research_interests.slice(0, 3).map((interest) => (
-              <span
+              <button
                 key={interest}
-                className="bg-accent/10 text-accent text-[10px] font-medium px-2 py-0.5 rounded-full leading-tight"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  navigate(`/staff?q=${encodeURIComponent(interest)}&filter=interest`);
+                }}
+                className="bg-accent/10 text-accent text-[10px] font-medium px-2 py-0.5 rounded-full leading-tight hover:bg-accent/20 transition-colors cursor-pointer"
               >
                 {interest}
-              </span>
+              </button>
             ))}
             {staff.research_interests.length > 3 && (
               <span className="text-muted-foreground text-[10px] font-medium px-1.5 py-0.5">
