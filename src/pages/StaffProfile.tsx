@@ -57,12 +57,12 @@ const StaffProfile = () => {
               animate={{ opacity: 1, y: 0 }}
               className="flex flex-col sm:flex-row gap-8"
             >
-              <div className="w-40 h-40 rounded-xl overflow-hidden shrink-0 border-2 border-accent/30">
+              <div className="w-44 h-56 rounded-xl overflow-hidden shrink-0 border-2 border-accent/30 bg-muted">
                 {staff.image_url ? (
                   <img
                     src={staff.image_url}
                     alt={staff.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-top"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-primary-foreground/10">
