@@ -160,7 +160,7 @@ const AdminDashboard = () => {
                   ...editing,
                   rank: editing.rank ?? "",
                   email: editing.email ?? "",
-                  phone: editing.phone ?? "",
+                  
                   office_location: editing.office_location ?? "",
                   bio: editing.bio ?? "",
                   qualifications: editing.qualifications ?? [],
