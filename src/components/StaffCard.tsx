@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Mail } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 export interface StaffMember {
@@ -21,7 +20,6 @@ interface StaffCardProps {
 
 const StaffCard = React.memo(({ staff }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
-  const navigate = useNavigate();
 
   const card = (
     <div className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
@@ -54,32 +52,6 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
         </h3>
         <p className="text-sm text-accent font-medium mb-2">{staff.faculty}</p>
         <p className="text-sm text-muted-foreground mb-3">{staff.department}</p>
-
-        {staff.research_interests && staff.research_interests.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-3">
-            {staff.research_interests.slice(0, 3).map((interest) => (
-              <button
-                key={interest}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  navigate(`/staff?q=${encodeURIComponent(interest)}&filter=interest`);
-                }}
-                className="bg-accent/10 text-accent text-[10px] font-medium px-2 py-0.5 rounded-full leading-tight hover:bg-accent/20 transition-colors cursor-pointer"
-              >
-                {interest}
-              </button>
-            ))}
-            {staff.research_interests.length > 3 && (
-              <span
-                className="text-muted-foreground text-[10px] font-medium px-1.5 py-0.5 cursor-default"
-                title={staff.research_interests.slice(3).join(", ")}
-              >
-                +{staff.research_interests.length - 3}
-              </span>
-            )}
-          </div>
-        )}
 
         <div className="pt-3 border-t border-border">
           {staff.email && (
