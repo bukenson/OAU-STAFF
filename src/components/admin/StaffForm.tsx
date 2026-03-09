@@ -14,8 +14,7 @@ interface StaffFormData {
   department: string;
   rank: string;
   email: string;
-  tion: string;
-  bio: string;
+    bio: string;
   qualifications: string[];
   research_interests: string[];
   publications: string[];
@@ -24,8 +23,7 @@ interface StaffFormData {
 
 const EMPTY_FORM: StaffFormData = {
   name: "", faculty: "", department: "", rank: "",
-  email: "", phone: "", offn: "", bio: "",
-  qualifications: [], research_interests: [], publications: [], image_url: "",
+  email: "", phone: "", offn: "", bio: ""cations: [], research_interests: [], publications: [], image_url: "",
 };
 
 interface StaffFormProps {
@@ -95,8 +93,7 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
       department: form.department.trim(),
       rank: form.rank.trim() || null,
       email: form.email.trim() || null,
-      phone: form.phone.trim() || null,
-      office_location: form.office_location.trim() || null,
+      phone: form.phone.trim() orm.office_location.trim() || null,
       bio: form.bio.trim() || null,
       qualifications: form.qualifications.filter(Boolean).length > 0 ? form.qualifications.filter(Boolean) : null,
       research_interests: form.research_interests.filter(Boolean).length > 0 ? form.research_interests.filter(Boolean) : null,
