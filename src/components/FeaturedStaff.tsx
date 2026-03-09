@@ -47,7 +47,7 @@ const FeaturedStaff = () => {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
             {featured.map((s, i) => (
-              <StaffCard key={s.id || s.name + i} staff={s} index={i} featured />
+              <StaffCard key={s.id || s.name + i} staff={s} index={i} />
             ))}
           </motion.div>
         )}
