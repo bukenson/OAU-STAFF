@@ -14,8 +14,7 @@ interface StaffFormData {
   department: string;
   rank: string;
   email: string;
-  
-  office_location: string;
+  tion: string;
   bio: string;
   qualifications: string[];
   research_interests: string[];
@@ -25,7 +24,7 @@ interface StaffFormData {
 
 const EMPTY_FORM: StaffFormData = {
   name: "", faculty: "", department: "", rank: "",
-  email: "", phone: "", office_location: "", bio: "",
+  email: "", phone: "", offn: "", bio: "",
   qualifications: [], research_interests: [], publications: [], image_url: "",
 };
 
