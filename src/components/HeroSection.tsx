@@ -52,7 +52,7 @@ interface HeroSectionProps {
 const HeroSection = ({ onSearch }: HeroSectionProps) => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
-  const typedText = useTypingEffect(WORDS);
+  const { display: typedText, opacity: textOpacity } = useTypingEffect(WORDS);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
