@@ -241,10 +241,6 @@ n: data.office_location ?a.bio ?? "",
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@oauife.edu.ng" />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+234 XXX XXX XXXX" />
-                  </div>
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="office">Office Location</Label>
                     <Input id="office" value={form.office_location} onChange={(e) => setForm({ ...form, office_location: e.target.value })} placeholder="Room 204, Faculty Building" />

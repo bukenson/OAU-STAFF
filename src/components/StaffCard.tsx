@@ -62,12 +62,6 @@ const StaffCard = React.memo(({ staff, featured = false }: StaffCardProps) => {
                 <span className="truncate">{staff.email}</span>
               </span>
             )}
-            {staff.phone && (
-              <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Phone size={14} />
-                <span>{staff.phone}</span>
-              </span>
-            )}
           </div>
         )}
       </div>

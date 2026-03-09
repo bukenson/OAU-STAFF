@@ -151,7 +151,6 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
         <div><Label>Faculty *</Label><Input value={form.faculty} onChange={(e) => set("faculty", e.target.value)} /></div>
         <div><Label>Department *</Label><Input value={form.department} onChange={(e) => set("department", e.target.value)} /></div>
         <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} /></div>
-        <div><Label>Phone</Label><Input value={form.phone} onChange={(e) => set("phone", e.target.value)} /></div>
         <div className="sm:col-span-2"><Label>Office Location</Label><Input value={form.office_location} onChange={(e) => set("office_location", e.target.value)} /></div>
       </div>
 
