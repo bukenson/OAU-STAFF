@@ -14,7 +14,7 @@ interface StaffFormData {
   department: string;
   rank: string;
   email: string;
-  phone: string;
+  
   office_location: string;
   bio: string;
   qualifications: string[];
