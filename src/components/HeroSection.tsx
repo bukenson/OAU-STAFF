@@ -13,15 +13,20 @@ const useTypingEffect = (words: string[]) => {
   const [display, setDisplay] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
     const current = words[wordIndex];
 
     const timeout = setTimeout(() => {
       if (!isDeleting) {
+        setOpacity(1);
         setDisplay(current.slice(0, display.length + 1));
         if (display.length + 1 === current.length) {
-          setTimeout(() => setIsDeleting(true), PAUSE_AFTER_TYPE);
+          setTimeout(() => {
+            setOpacity(0);
+            setTimeout(() => setIsDeleting(true), 300);
+          }, PAUSE_AFTER_TYPE);
           return;
         }
       } else {
@@ -37,7 +42,7 @@ const useTypingEffect = (words: string[]) => {
     return () => clearTimeout(timeout);
   }, [display, isDeleting, wordIndex, words]);
 
-  return display;
+  return { display, opacity };
 };
 
 interface HeroSectionProps {
