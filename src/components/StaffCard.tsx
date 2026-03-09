@@ -16,10 +16,9 @@ export interface StaffMember {
 interface StaffCardProps {
   staff: StaffMember;
   index: number;
-  featured?: boolean;
 }
 
-const StaffCard = React.memo(({ staff, featured = false }: StaffCardProps) => {
+const StaffCard = React.memo(({ staff }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
 
   const card = (
