@@ -16,7 +16,7 @@ const StaffList = () => {
   const initialFilter = searchParams.get("filter") || "";
 
   const [search, setSearch] = useState(
-    !initialFilter || initialFilter === "all" || initialFilter === "name" ? initialQuery : ""
+    !initialFilter || initialFilter === "all" || initialFilter === "name" || initialFilter === "email" || initialFilter === "rank" || initialFilter === "interest" ? initialQuery : ""
   );
   const [facultyFilter, setFacultyFilter] = useState(
     initialFilter === "faculty" ? initialQuery : searchParams.get("faculty") || ""
