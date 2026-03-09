@@ -40,9 +40,9 @@ interface ProfileForm {
 }
 
 const emptyForm: ProfileForm = {
-  name: "", faculty: "", department: "", rank: "", email: "", phone: "",
-  tion: "", bio:url: "",
-  qua: [], research_interests: [], publications: [],
+  name: "", faculty: "", department: "", rank: "", email: "",
+  office_location: "", bio: "", image_url: "",
+  qualifications: [], research_interests: [], publications: [],
 };
 
 const MyProfile = () => {
