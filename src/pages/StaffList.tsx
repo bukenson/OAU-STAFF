@@ -16,7 +16,7 @@ const StaffList = () => {
   const initialFilter = searchParams.get("filter") || "";
 
   const [search, setSearch] = useState(
-    !initialFilter || initialFilter === "all" || initialFilter === "name" ? initialQuery : ""
+    !initialFilter || initialFilter === "all" || initialFilter === "name" || initialFilter === "email" || initialFilter === "rank" || initialFilter === "interest" ? initialQuery : ""
   );
   const [facultyFilter, setFacultyFilter] = useState(
     initialFilter === "faculty" ? initialQuery : searchParams.get("faculty") || ""
@@ -36,12 +36,16 @@ const StaffList = () => {
   const { data: ranks = [] } = useRanks();
 
   const filteredStaff = useMemo(() => {
+    const searchLower = search.toLowerCase();
     return allStaff.filter((staff) => {
       const matchesSearch =
         !search ||
-        staff.name.toLowerCase().includes(search.toLowerCase()) ||
-        staff.department.toLowerCase().includes(search.toLowerCase()) ||
-        staff.faculty.toLowerCase().includes(search.toLowerCase());
+        staff.name.toLowerCase().includes(searchLower) ||
+        staff.department.toLowerCase().includes(searchLower) ||
+        staff.faculty.toLowerCase().includes(searchLower) ||
+        (staff.email?.toLowerCase().includes(searchLower) ?? false) ||
+        (staff.status?.toLowerCase().includes(searchLower) ?? false) ||
+        (staff.research_interests?.some(i => i.toLowerCase().includes(searchLower)) ?? false);
 
       const matchesFaculty = !facultyFilter || staff.faculty === facultyFilter;
       const matchesDepartment = !departmentFilter || staff.department === departmentFilter;

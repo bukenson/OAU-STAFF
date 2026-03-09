@@ -107,6 +107,9 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
             <option value="name" className="text-foreground">Name</option>
             <option value="department" className="text-foreground">Department</option>
             <option value="faculty" className="text-foreground">Faculty</option>
+            <option value="email" className="text-foreground">Email</option>
+            <option value="rank" className="text-foreground">Rank</option>
+            <option value="interest" className="text-foreground">Area of Interest</option>
           </select>
 
           <div className="relative flex-1">
