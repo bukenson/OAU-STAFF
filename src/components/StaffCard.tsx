@@ -21,6 +21,7 @@ interface StaffCardProps {
 
 const StaffCard = React.memo(({ staff }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
+  const navigate = useNavigate();
 
   const card = (
     <div className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
