@@ -11,6 +11,7 @@ export interface StaffMember {
   phone?: string;
   status?: string;
   image?: string;
+  research_interests?: string[];
 }
 
 interface StaffCardProps {
