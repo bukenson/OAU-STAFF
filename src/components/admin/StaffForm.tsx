@@ -14,7 +14,6 @@ interface StaffFormData {
   department: string;
   rank: string;
   email: string;
-  phone: string;
   office_location: string;
   bio: string;
   qualifications: string[];
@@ -25,7 +24,7 @@ interface StaffFormData {
 
 const EMPTY_FORM: StaffFormData = {
   name: "", faculty: "", department: "", rank: "",
-  email: "", phone: "", office_location: "", bio: "",
+  email: "", office_location: "", bio: "",
   qualifications: [], research_interests: [], publications: [], image_url: "",
 };
 
@@ -96,7 +95,6 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
       department: form.department.trim(),
       rank: form.rank.trim() || null,
       email: form.email.trim() || null,
-      phone: form.phone.trim() || null,
       office_location: form.office_location.trim() || null,
       bio: form.bio.trim() || null,
       qualifications: form.qualifications.filter(Boolean).length > 0 ? form.qualifications.filter(Boolean) : null,
@@ -155,7 +153,6 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
         <div><Label>Faculty *</Label><Input value={form.faculty} onChange={(e) => set("faculty", e.target.value)} /></div>
         <div><Label>Department *</Label><Input value={form.department} onChange={(e) => set("department", e.target.value)} /></div>
         <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} /></div>
-        <div><Label>Phone</Label><Input value={form.phone} onChange={(e) => set("phone", e.target.value)} /></div>
         <div className="sm:col-span-2"><Label>Office Location</Label><Input value={form.office_location} onChange={(e) => set("office_location", e.target.value)} /></div>
       </div>
 

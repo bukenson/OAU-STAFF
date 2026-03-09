@@ -18,7 +18,7 @@ async function fetchStaff(): Promise<StaffMember[]> {
     faculty: row.faculty,
     department: row.department,
     email: row.email ?? undefined,
-    phone: row.phone ?? undefined,
+    
     status: row.rank ?? undefined,
     image: row.image_url ?? undefined,
     research_interests: row.research_interests ?? undefined,

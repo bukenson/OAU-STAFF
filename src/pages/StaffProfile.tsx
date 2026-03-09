@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, Phone, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -213,20 +213,6 @@ const StaffProfile = () => {
                     ) : (
                       <p className="flex items-center gap-3 text-sm text-muted-foreground/50">
                         <Mail size={16} className="shrink-0" />
-                        Not available
-                      </p>
-                    )}
-                    {staff.phone ? (
-                      <a
-                        href={`tel:${staff.phone}`}
-                        className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors"
-                      >
-                        <Phone size={16} className="text-accent shrink-0" />
-                        {staff.phone}
-                      </a>
-                    ) : (
-                      <p className="flex items-center gap-3 text-sm text-muted-foreground/50">
-                        <Phone size={16} className="shrink-0" />
                         Not available
                       </p>
                     )}

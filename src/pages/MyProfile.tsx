@@ -31,7 +31,6 @@ interface ProfileForm {
   department: string;
   rank: string;
   email: string;
-  phone: string;
   office_location: string;
   bio: string;
   image_url: string;
@@ -41,7 +40,7 @@ interface ProfileForm {
 }
 
 const emptyForm: ProfileForm = {
-  name: "", faculty: "", department: "", rank: "", email: "", phone: "",
+  name: "", faculty: "", department: "", rank: "", email: "",
   office_location: "", bio: "", image_url: "",
   qualifications: [], research_interests: [], publications: [],
 };
@@ -107,7 +106,6 @@ const MyProfile = () => {
           department: data.department,
           rank: data.rank ?? "",
           email: data.email ?? user.email ?? "",
-          phone: data.phone ?? "",
           office_location: data.office_location ?? "",
           bio: data.bio ?? "",
           image_url: data.image_url ?? "",
@@ -135,7 +133,6 @@ const MyProfile = () => {
       department: form.department.trim(),
       rank: form.rank || null,
       email: form.email.trim() || null,
-      phone: form.phone.trim() || null,
       office_location: form.office_location.trim() || null,
       bio: form.bio.trim() || null,
       image_url: form.image_url.trim() || null,
@@ -243,10 +240,6 @@ const MyProfile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@oauife.edu.ng" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+234 XXX XXX XXXX" />
                   </div>
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="office">Office Location</Label>
