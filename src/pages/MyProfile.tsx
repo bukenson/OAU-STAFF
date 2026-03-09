@@ -31,8 +31,7 @@ interface ProfileForm {
   department: string;
   rank: string;
   email: string;
-  
-  office_location: string;
+  tion: string;
   bio: string;
   image_url: string;
   qualifications: string[];
@@ -42,7 +41,7 @@ interface ProfileForm {
 
 const emptyForm: ProfileForm = {
   name: "", faculty: "", department: "", rank: "", email: "", phone: "",
-  office_location: "", bio: "", image_url: "",
+  tion: "", bio: "", image_url: "",
   qualifications: [], research_interests: [], publications: [],
 };
 
