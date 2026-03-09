@@ -252,11 +252,15 @@ const MyProfile = () => {
               <div className="bg-card border border-border rounded-xl p-6 space-y-4">
                 <h2 className="font-display text-lg font-semibold text-card-foreground">Profile Photo</h2>
                 <div className="flex items-start gap-6">
-                  <div className="w-28 h-28 rounded-xl overflow-hidden border-2 border-border shrink-0 bg-muted flex items-center justify-center">
+                  <div className="w-32 h-40 rounded-xl overflow-hidden border-2 border-accent/30 shrink-0 bg-muted flex items-center justify-center">
                     {form.image_url ? (
-                      <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
+                      <img src={form.image_url} alt="Preview" className="w-full h-full object-cover object-top" />
                     ) : (
-                      <Camera size={32} className="text-muted-foreground/40" />
+                      <div className="w-full h-full flex items-center justify-center bg-primary/10">
+                        <span className="font-display text-4xl font-bold text-primary/30">
+                          {form.name?.charAt(0) || "?"}
+                        </span>
+                      </div>
                     )}
                   </div>
                   <div className="space-y-3 flex-1">
