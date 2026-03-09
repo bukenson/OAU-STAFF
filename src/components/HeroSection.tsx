@@ -1,7 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import heroImage from "@/assets/oau-campus-hero.jpg";
+
+const WORDS = ["Staff Directory", "Faculty Finder", "Department Search", "Academic Lookup"];
+const TYPING_SPEED = 120;
+const DELETE_SPEED = 60;
+const PAUSE_AFTER_TYPE = 2000;
+const PAUSE_AFTER_DELETE = 500;
+
+const useTypingEffect = (words: string[]) => {
+  const [display, setDisplay] = useState("");
+  const [wordIndex, setWordIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = words[wordIndex];
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setDisplay(current.slice(0, display.length + 1));
+        if (display.length + 1 === current.length) {
+          setTimeout(() => setIsDeleting(true), PAUSE_AFTER_TYPE);
+          return;
+        }
+      } else {
+        setDisplay(current.slice(0, display.length - 1));
+        if (display.length - 1 === 0) {
+          setIsDeleting(false);
+          setWordIndex((prev) => (prev + 1) % words.length);
+          return;
+        }
+      }
+    }, isDeleting ? DELETE_SPEED : TYPING_SPEED);
+
+    return () => clearTimeout(timeout);
+  }, [display, isDeleting, wordIndex, words]);
+
+  return display;
+};
 
 interface HeroSectionProps {
   onSearch: (query: string, filter: string) => void;
@@ -10,6 +47,7 @@ interface HeroSectionProps {
 const HeroSection = ({ onSearch }: HeroSectionProps) => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
+  const typedText = useTypingEffect(WORDS);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +79,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
             Obafemi Awolowo University, Ile-Ife
           </p>
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mb-6 text-balance">
-            Staff Directory
+            {typedText}<span className="animate-pulse">|</span>
           </h1>
           <p className="text-primary-foreground text-lg sm:text-xl max-w-2xl mx-auto mb-10 font-semibold">
             Find staff by name, faculty, department, and rank across all 14 faculties
