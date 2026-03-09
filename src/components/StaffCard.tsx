@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail } from "lucide-react";
+import { Mail } from } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export interface StaffMember {
@@ -7,8 +7,7 @@ export interface StaffMember {
   name: string;
   faculty: string;
   department: string;
-  email?: string;
-  phone?:us?: string;
+  email?: strstatphone?:us?: string;
   image?: string;
   research_interests?: string[];
 }

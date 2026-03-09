@@ -94,7 +94,7 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
       department: form.department.trim(),
       rank: form.rank.trim() || null,
       email: form.email.trim() || null,
-      phone: form.phone.trim() orm.office_location.trim() || null,
+      office_location: form.office_location.trim() || null,
       bio: form.bio.trim() || null,
       qualifications: form.qualifications.filter(Boolean).length > 0 ? form.qualifications.filter(Boolean) : null,
       research_interests: form.research_interests.filter(Boolean).length > 0 ? form.research_interests.filter(Boolean) : null,
