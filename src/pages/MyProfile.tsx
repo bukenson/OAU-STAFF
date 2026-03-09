@@ -31,7 +31,8 @@ interface ProfileForm {
   department: string;
   rank: string;
   email: string;
-  
+  office_location: string;
+  bio: string;
   image_url: string;
   qualifications: string[];
   research_interests: string[];
