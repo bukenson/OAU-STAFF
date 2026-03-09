@@ -1,7 +1,44 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import heroImage from "@/assets/oau-campus-hero.jpg";
+
+const WORDS = ["Staff Directory", "Faculty Finder", "Department Search", "Academic Lookup"];
+const TYPING_SPEED = 120;
+const DELETE_SPEED = 60;
+const PAUSE_AFTER_TYPE = 2000;
+const PAUSE_AFTER_DELETE = 500;
+
+const useTypingEffect = (words: string[]) => {
+  const [display, setDisplay] = useState("");
+  const [wordIndex, setWordIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = words[wordIndex];
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setDisplay(current.slice(0, display.length + 1));
+        if (display.length + 1 === current.length) {
+          setTimeout(() => setIsDeleting(true), PAUSE_AFTER_TYPE);
+          return;
+        }
+      } else {
+        setDisplay(current.slice(0, display.length - 1));
+        if (display.length - 1 === 0) {
+          setIsDeleting(false);
+          setWordIndex((prev) => (prev + 1) % words.length);
+          return;
+        }
+      }
+    }, isDeleting ? DELETE_SPEED : TYPING_SPEED);
+
+    return () => clearTimeout(timeout);
+  }, [display, isDeleting, wordIndex, words]);
+
+  return display;
+};
 
 interface HeroSectionProps {
   onSearch: (query: string, filter: string) => void;
