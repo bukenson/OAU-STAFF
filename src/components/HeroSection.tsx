@@ -79,7 +79,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
             Obafemi Awolowo University, Ile-Ife
           </p>
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mb-6 text-balance">
-            Staff Directory
+            {typedText}<span className="animate-pulse">|</span>
           </h1>
           <p className="text-primary-foreground text-lg sm:text-xl max-w-2xl mx-auto mb-10 font-semibold">
             Find staff by name, faculty, department, and rank across all 14 faculties
