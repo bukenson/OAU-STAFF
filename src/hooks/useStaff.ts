@@ -18,10 +18,10 @@ async function fetchStaff(): Promise<StaffMember[]> {
     faculty: row.faculty,
     department: row.department,
     email: row.email ?? undefined,
-    
     status: row.rank ?? undefined,
     image: row.image_url ?? undefined,
     research_interests: row.research_interests ?? undefined,
+    office_location: row.office_location ?? undefined,
   }));
 }
 

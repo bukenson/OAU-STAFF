@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mail } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export interface StaffMember {
@@ -11,6 +11,7 @@ export interface StaffMember {
   status?: string;
   image?: string;
   research_interests?: string[];
+  office_location?: string;
 }
 
 interface StaffCardProps {
@@ -53,11 +54,17 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
         <p className="text-sm text-accent font-medium mb-2">{staff.faculty}</p>
         <p className="text-sm text-muted-foreground mb-3">{staff.department}</p>
 
-        <div className="pt-3 border-t border-border">
+        <div className="pt-3 border-t border-border space-y-2">
           {staff.email && (
             <span className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Mail size={14} />
+              <Mail size={14} className="shrink-0" />
               <span className="truncate">{staff.email}</span>
+            </span>
+          )}
+          {staff.office_location && (
+            <span className="flex items-center gap-2 text-xs text-muted-foreground opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-8 transition-all duration-300 overflow-hidden">
+              <MapPin size={14} className="shrink-0 text-accent" />
+              <span className="truncate">{staff.office_location}</span>
             </span>
           )}
         </div>
