@@ -53,16 +53,14 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
         <p className="text-sm text-accent font-medium mb-2">{staff.faculty}</p>
         <p className="text-sm text-muted-foreground mb-4">{staff.department}</p>
 
-        {featured && (
-          <div className="space-y-2 pt-3 border-t border-border">
-            {staff.email && (
-              <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Mail size={14} />
-                <span className="truncate">{staff.email}</span>
-              </span>
-            )}
-          </div>
-        )}
+        <div className="space-y-2 pt-3 border-t border-border">
+          {staff.email && (
+            <span className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Mail size={14} />
+              <span className="truncate">{staff.email}</span>
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
