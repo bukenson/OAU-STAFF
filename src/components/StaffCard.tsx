@@ -71,7 +71,10 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
               </button>
             ))}
             {staff.research_interests.length > 3 && (
-              <span className="text-muted-foreground text-[10px] font-medium px-1.5 py-0.5">
+              <span
+                className="text-muted-foreground text-[10px] font-medium px-1.5 py-0.5 cursor-default"
+                title={staff.research_interests.slice(3).join(", ")}
+              >
                 +{staff.research_interests.length - 3}
               </span>
             )}
