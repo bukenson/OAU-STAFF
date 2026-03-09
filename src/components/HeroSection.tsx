@@ -13,15 +13,20 @@ const useTypingEffect = (words: string[]) => {
   const [display, setDisplay] = useState("");
   const [wordIndex, setWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
     const current = words[wordIndex];
 
     const timeout = setTimeout(() => {
       if (!isDeleting) {
+        setOpacity(1);
         setDisplay(current.slice(0, display.length + 1));
         if (display.length + 1 === current.length) {
-          setTimeout(() => setIsDeleting(true), PAUSE_AFTER_TYPE);
+          setTimeout(() => {
+            setOpacity(0);
+            setTimeout(() => setIsDeleting(true), 300);
+          }, PAUSE_AFTER_TYPE);
           return;
         }
       } else {
@@ -37,7 +42,7 @@ const useTypingEffect = (words: string[]) => {
     return () => clearTimeout(timeout);
   }, [display, isDeleting, wordIndex, words]);
 
-  return display;
+  return { display, opacity };
 };
 
 interface HeroSectionProps {
@@ -47,7 +52,7 @@ interface HeroSectionProps {
 const HeroSection = ({ onSearch }: HeroSectionProps) => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
-  const typedText = useTypingEffect(WORDS);
+  const { display: typedText, opacity: textOpacity } = useTypingEffect(WORDS);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,7 +84,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
             Obafemi Awolowo University, Ile-Ife
           </p>
           <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mb-6 text-balance">
-            {typedText}<span className="animate-pulse">|</span>
+            <span style={{ opacity: textOpacity, transition: "opacity 0.3s ease-in-out" }}>{typedText}</span><span className="animate-pulse">|</span>
           </h1>
           <p className="text-primary-foreground text-lg sm:text-xl max-w-2xl mx-auto mb-10 font-semibold">
             Find staff by name, faculty, department, and rank across all 14 faculties
