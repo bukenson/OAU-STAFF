@@ -34,6 +34,7 @@ interface ProfileForm {
   rank: string;
   staff_category: StaffCategory;
   email: string;
+  phone: string;
   office_location: string;
   bio: string;
   image_url: string;
@@ -45,7 +46,7 @@ interface ProfileForm {
 
 const emptyForm: ProfileForm = {
   name: "", faculty: "", department: "", rank: "", staff_category: "academic",
-  email: "", office_location: "", bio: "", image_url: "",
+  email: "", phone: "", office_location: "", bio: "", image_url: "",
   qualifications: [], research_interests: [], publications: [], publication_link: "",
 };
 
@@ -112,6 +113,7 @@ const MyProfile = () => {
           rank: data.rank ?? "",
           staff_category: isAcademic ? "academic" : (data.rank ? "non-academic" : "academic"),
           email: data.email ?? user.email ?? "",
+          phone: data.phone ?? "",
           office_location: data.office_location ?? "",
           bio: data.bio ?? "",
           image_url: data.image_url ?? "",
@@ -140,6 +142,7 @@ const MyProfile = () => {
       department: form.department.trim(),
       rank: form.rank || null,
       email: form.email.trim() || null,
+      phone: form.phone.trim() || null,
       office_location: form.office_location.trim() || null,
       bio: form.bio.trim() || null,
       image_url: form.image_url.trim() || null,
@@ -262,6 +265,10 @@ const MyProfile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@oauife.edu.ng" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone (optional)</Label>
+                    <Input id="phone" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+234 XXX XXX XXXX" />
                   </div>
                   <div className="space-y-2 sm:col-span-2">
                     <Label htmlFor="office">Office Location</Label>
