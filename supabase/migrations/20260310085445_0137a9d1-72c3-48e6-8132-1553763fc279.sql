@@ -1,0 +1,1 @@
+ALTER TABLE public.staff_members ADD COLUMN publication_link text DEFAULT NULL;
