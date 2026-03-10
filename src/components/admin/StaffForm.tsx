@@ -20,6 +20,7 @@ interface StaffFormData {
   faculty: string;
   department: string;
   rank: string;
+  staff_category: StaffCategory;
   email: string;
   office_location: string;
   bio: string;
@@ -30,7 +31,7 @@ interface StaffFormData {
 }
 
 const EMPTY_FORM: StaffFormData = {
-  name: "", faculty: "", department: "", rank: "",
+  name: "", faculty: "", department: "", rank: "", staff_category: "academic",
   email: "", office_location: "", bio: "",
   qualifications: [], research_interests: [], publications: [], image_url: "",
 };
