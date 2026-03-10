@@ -113,6 +113,7 @@ const MyProfile = () => {
           rank: data.rank ?? "",
           staff_category: isAcademic ? "academic" : (data.rank ? "non-academic" : "academic"),
           email: data.email ?? user.email ?? "",
+          phone: data.phone ?? "",
           office_location: data.office_location ?? "",
           bio: data.bio ?? "",
           image_url: data.image_url ?? "",
