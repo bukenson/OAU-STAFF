@@ -4,15 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
+const ACADEMIC_RANKS = [
+  "Graduate Assistant", "Assistant Lecturer", "Lecturer II", "Lecturer I",
+  "Senior Lecturer", "Reader/Associate Professor", "Professor",
+];
+
+type StaffCategory = "academic" | "non-academic";
 interface StaffFormData {
   id?: string;
   name: string;
   faculty: string;
   department: string;
   rank: string;
+  staff_category: StaffCategory;
   email: string;
   office_location: string;
   bio: string;
@@ -23,7 +31,7 @@ interface StaffFormData {
 }
 
 const EMPTY_FORM: StaffFormData = {
-  name: "", faculty: "", department: "", rank: "",
+  name: "", faculty: "", department: "", rank: "", staff_category: "academic",
   email: "", office_location: "", bio: "",
   qualifications: [], research_interests: [], publications: [], image_url: "",
 };
@@ -149,7 +157,29 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
       {/* Basic Info */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div><Label>Name *</Label><Input value={form.name} onChange={(e) => set("name", e.target.value)} /></div>
-        <div><Label>Rank</Label><Input value={form.rank} onChange={(e) => set("rank", e.target.value)} placeholder="e.g. Professor, Senior Lecturer" /></div>
+        <div>
+          <Label>Staff Category</Label>
+          <Select value={form.staff_category} onValueChange={(v: StaffCategory) => setForm((f) => ({ ...f, staff_category: v, rank: "" }))}>
+            <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="academic">Academic Staff</SelectItem>
+              <SelectItem value="non-academic">Non-Academic Staff</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Rank</Label>
+          {form.staff_category === "academic" ? (
+            <Select value={form.rank} onValueChange={(v) => set("rank", v)}>
+              <SelectTrigger><SelectValue placeholder="Select rank" /></SelectTrigger>
+              <SelectContent>
+                {ACADEMIC_RANKS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input value={form.rank} onChange={(e) => set("rank", e.target.value)} placeholder="e.g. Senior Administrative Officer" />
+          )}
+        </div>
         <div><Label>Faculty *</Label><Input value={form.faculty} onChange={(e) => set("faculty", e.target.value)} /></div>
         <div><Label>Department *</Label><Input value={form.department} onChange={(e) => set("department", e.target.value)} /></div>
         <div><Label>Email</Label><Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} /></div>

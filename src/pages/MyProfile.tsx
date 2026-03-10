@@ -20,16 +20,19 @@ const FACULTIES = [
   "Law", "Pharmacy", "Science", "Social Sciences", "Technology",
 ];
 
-const RANKS = [
+const ACADEMIC_RANKS = [
   "Graduate Assistant", "Assistant Lecturer", "Lecturer II", "Lecturer I",
   "Senior Lecturer", "Reader/Associate Professor", "Professor",
 ];
+
+type StaffCategory = "academic" | "non-academic";
 
 interface ProfileForm {
   name: string;
   faculty: string;
   department: string;
   rank: string;
+  staff_category: StaffCategory;
   email: string;
   office_location: string;
   bio: string;
@@ -40,8 +43,8 @@ interface ProfileForm {
 }
 
 const emptyForm: ProfileForm = {
-  name: "", faculty: "", department: "", rank: "", email: "",
-  office_location: "", bio: "", image_url: "",
+  name: "", faculty: "", department: "", rank: "", staff_category: "academic",
+  email: "", office_location: "", bio: "", image_url: "",
   qualifications: [], research_interests: [], publications: [],
 };
 
@@ -100,11 +103,13 @@ const MyProfile = () => {
 
       if (data) {
         setExistingId(data.id);
+        const isAcademic = ACADEMIC_RANKS.includes(data.rank ?? "");
         setForm({
           name: data.name,
           faculty: data.faculty,
           department: data.department,
           rank: data.rank ?? "",
+          staff_category: isAcademic ? "academic" : (data.rank ? "non-academic" : "academic"),
           email: data.email ?? user.email ?? "",
           office_location: data.office_location ?? "",
           bio: data.bio ?? "",
@@ -209,13 +214,27 @@ const MyProfile = () => {
                     <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="Dr. John Doe" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="rank">Rank</Label>
-                    <Select value={form.rank} onValueChange={(v) => setForm({ ...form, rank: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select rank" /></SelectTrigger>
+                    <Label>Staff Category</Label>
+                    <Select value={form.staff_category} onValueChange={(v: StaffCategory) => setForm({ ...form, staff_category: v, rank: "" })}>
+                      <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                       <SelectContent>
-                        {RANKS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                        <SelectItem value="academic">Academic Staff</SelectItem>
+                        <SelectItem value="non-academic">Non-Academic Staff</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rank">Rank</Label>
+                    {form.staff_category === "academic" ? (
+                      <Select value={form.rank} onValueChange={(v) => setForm({ ...form, rank: v })}>
+                        <SelectTrigger><SelectValue placeholder="Select rank" /></SelectTrigger>
+                        <SelectContent>
+                          {ACADEMIC_RANKS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input id="rank" value={form.rank} onChange={(e) => setForm({ ...form, rank: e.target.value })} placeholder="e.g. Senior Administrative Officer" />
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="faculty">Faculty *</Label>

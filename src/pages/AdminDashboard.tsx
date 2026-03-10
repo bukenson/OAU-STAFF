@@ -13,6 +13,11 @@ import {
   AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
   AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+
+const ACADEMIC_RANKS_LIST = [
+  "Graduate Assistant", "Assistant Lecturer", "Lecturer II", "Lecturer I",
+  "Senior Lecturer", "Reader/Associate Professor", "Professor",
+];
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
@@ -159,6 +164,7 @@ const AdminDashboard = () => {
                 staff={editing === "new" ? null : {
                   ...editing,
                   rank: editing.rank ?? "",
+                  staff_category: ACADEMIC_RANKS_LIST.includes(editing.rank ?? "") ? "academic" as const : (editing.rank ? "non-academic" as const : "academic" as const),
                   email: editing.email ?? "",
                   
                   office_location: editing.office_location ?? "",
