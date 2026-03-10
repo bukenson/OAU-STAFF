@@ -26,7 +26,7 @@ export type Database = {
           name: string
           office_location: string | null
           phone: string | null
-          publication_link: string | null
+          publication_link: string[] | null
           publications: string[] | null
           qualifications: string[] | null
           rank: string | null
@@ -45,7 +45,7 @@ export type Database = {
           name: string
           office_location?: string | null
           phone?: string | null
-          publication_link?: string | null
+          publication_link?: string[] | null
           publications?: string[] | null
           qualifications?: string[] | null
           rank?: string | null
@@ -64,7 +64,7 @@ export type Database = {
           name?: string
           office_location?: string | null
           phone?: string | null
-          publication_link?: string | null
+          publication_link?: string[] | null
           publications?: string[] | null
           qualifications?: string[] | null
           rank?: string | null
