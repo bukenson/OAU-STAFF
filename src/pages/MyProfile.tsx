@@ -20,16 +20,19 @@ const FACULTIES = [
   "Law", "Pharmacy", "Science", "Social Sciences", "Technology",
 ];
 
-const RANKS = [
+const ACADEMIC_RANKS = [
   "Graduate Assistant", "Assistant Lecturer", "Lecturer II", "Lecturer I",
   "Senior Lecturer", "Reader/Associate Professor", "Professor",
 ];
+
+type StaffCategory = "academic" | "non-academic";
 
 interface ProfileForm {
   name: string;
   faculty: string;
   department: string;
   rank: string;
+  staff_category: StaffCategory;
   email: string;
   office_location: string;
   bio: string;
