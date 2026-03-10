@@ -214,13 +214,27 @@ const MyProfile = () => {
                     <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="Dr. John Doe" />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="rank">Rank</Label>
-                    <Select value={form.rank} onValueChange={(v) => setForm({ ...form, rank: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select rank" /></SelectTrigger>
+                    <Label>Staff Category</Label>
+                    <Select value={form.staff_category} onValueChange={(v: StaffCategory) => setForm({ ...form, staff_category: v, rank: "" })}>
+                      <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                       <SelectContent>
-                        {RANKS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                        <SelectItem value="academic">Academic Staff</SelectItem>
+                        <SelectItem value="non-academic">Non-Academic Staff</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rank">Rank</Label>
+                    {form.staff_category === "academic" ? (
+                      <Select value={form.rank} onValueChange={(v) => setForm({ ...form, rank: v })}>
+                        <SelectTrigger><SelectValue placeholder="Select rank" /></SelectTrigger>
+                        <SelectContent>
+                          {ACADEMIC_RANKS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input id="rank" value={form.rank} onChange={(e) => setForm({ ...form, rank: e.target.value })} placeholder="e.g. Senior Administrative Officer" />
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="faculty">Faculty *</Label>
