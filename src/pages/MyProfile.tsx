@@ -40,12 +40,13 @@ interface ProfileForm {
   qualifications: string[];
   research_interests: string[];
   publications: string[];
+  publication_link: string;
 }
 
 const emptyForm: ProfileForm = {
   name: "", faculty: "", department: "", rank: "", staff_category: "academic",
   email: "", office_location: "", bio: "", image_url: "",
-  qualifications: [], research_interests: [], publications: [],
+  qualifications: [], research_interests: [], publications: [], publication_link: "",
 };
 
 const MyProfile = () => {
