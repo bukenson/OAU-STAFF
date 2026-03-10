@@ -180,6 +180,35 @@ const StaffProfile = () => {
                   </motion.div>
                 )}
 
+                {/* Publication Links */}
+                {(staff as any).publication_link && (staff as any).publication_link.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 }}
+                  >
+                    <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <ExternalLink size={20} className="text-accent" />
+                      Publication Links
+                    </h2>
+                    <ul className="space-y-2">
+                      {((staff as any).publication_link as string[]).map((link, i) => (
+                        <li key={i}>
+                          <a
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors underline underline-offset-2 break-all"
+                          >
+                            <ExternalLink size={14} className="shrink-0" />
+                            {link}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                )}
+
                 {/* Empty state when no details */}
                 {!staff.bio && (!staff.publications || staff.publications.length === 0) && (
                   <div className="text-center py-12 text-muted-foreground">
