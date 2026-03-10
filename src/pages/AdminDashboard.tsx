@@ -159,6 +159,7 @@ const AdminDashboard = () => {
                 staff={editing === "new" ? null : {
                   ...editing,
                   rank: editing.rank ?? "",
+                  staff_category: ACADEMIC_RANKS_LIST.includes(editing.rank ?? "") ? "academic" as const : (editing.rank ? "non-academic" as const : "academic" as const),
                   email: editing.email ?? "",
                   
                   office_location: editing.office_location ?? "",
