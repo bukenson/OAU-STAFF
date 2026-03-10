@@ -46,7 +46,7 @@ interface ProfileForm {
 
 const emptyForm: ProfileForm = {
   name: "", faculty: "", department: "", rank: "", staff_category: "academic",
-  email: "", office_location: "", bio: "", image_url: "",
+  email: "", phone: "", office_location: "", bio: "", image_url: "",
   qualifications: [], research_interests: [], publications: [], publication_link: "",
 };
 
