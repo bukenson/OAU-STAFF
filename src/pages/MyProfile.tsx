@@ -34,6 +34,7 @@ interface ProfileForm {
   rank: string;
   staff_category: StaffCategory;
   email: string;
+  phone: string;
   office_location: string;
   bio: string;
   image_url: string;
