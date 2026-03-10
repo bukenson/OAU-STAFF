@@ -26,7 +26,7 @@ const FeaturedStaff = () => {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="bg-card rounded-xl border border-border overflow-hidden">
                 <Skeleton className="aspect-[3/4] w-full" />
