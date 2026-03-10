@@ -41,13 +41,13 @@ interface ProfileForm {
   qualifications: string[];
   research_interests: string[];
   publications: string[];
-  publication_link: string;
+  publication_link: string[];
 }
 
 const emptyForm: ProfileForm = {
   name: "", faculty: "", department: "", rank: "", staff_category: "academic",
   email: "", phone: "", office_location: "", bio: "", image_url: "",
-  qualifications: [], research_interests: [], publications: [], publication_link: "",
+  qualifications: [], research_interests: [], publications: [], publication_link: [],
 };
 
 const MyProfile = () => {
@@ -64,6 +64,7 @@ const MyProfile = () => {
   const [newQualification, setNewQualification] = useState("");
   const [newInterest, setNewInterest] = useState("");
   const [newPublication, setNewPublication] = useState("");
+  const [newPubLink, setNewPubLink] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -120,7 +121,7 @@ const MyProfile = () => {
           qualifications: data.qualifications ?? [],
           research_interests: data.research_interests ?? [],
           publications: data.publications ?? [],
-          publication_link: (data as any).publication_link ?? "",
+          publication_link: (data as any).publication_link ?? [],
         });
       } else {
         setForm({ ...emptyForm, email: user.email ?? "" });
@@ -149,7 +150,7 @@ const MyProfile = () => {
       qualifications: form.qualifications.length ? form.qualifications : null,
       research_interests: form.research_interests.length ? form.research_interests : null,
       publications: form.publications.length ? form.publications : null,
-      publication_link: form.publication_link.trim() || null,
+      publication_link: form.publication_link.length ? form.publication_link : null,
     };
 
     let error;
@@ -383,17 +384,16 @@ const MyProfile = () => {
                 onRemove={(i) => removeFromArray("publications", i)}
               />
 
-              {/* Publication Link */}
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                <h2 className="font-display text-lg font-semibold text-card-foreground">Publication Profile Link</h2>
-                <p className="text-sm text-muted-foreground">Add a link to your Google Scholar, ResearchGate, or other publication profile.</p>
-                <Input
-                  type="url"
-                  value={form.publication_link}
-                  onChange={(e) => setForm({ ...form, publication_link: e.target.value })}
-                  placeholder="e.g. https://scholar.google.com/citations?user=..."
-                />
-              </div>
+              {/* Publication Links */}
+              <ArraySection
+                title="Publication Profile Links"
+                items={form.publication_link}
+                inputValue={newPubLink}
+                setInputValue={setNewPubLink}
+                placeholder="e.g. https://scholar.google.com/citations?user=..."
+                onAdd={() => addToArray("publication_link" as any, newPubLink, setNewPubLink)}
+                onRemove={(i) => removeFromArray("publication_link" as any, i)}
+              />
 
               <Button type="submit" size="lg" className="w-full" disabled={saving}>
                 <Save size={18} />
