@@ -376,6 +376,18 @@ const MyProfile = () => {
                 onRemove={(i) => removeFromArray("publications", i)}
               />
 
+              {/* Publication Link */}
+              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
+                <h2 className="font-display text-lg font-semibold text-card-foreground">Publication Profile Link</h2>
+                <p className="text-sm text-muted-foreground">Add a link to your Google Scholar, ResearchGate, or other publication profile.</p>
+                <Input
+                  type="url"
+                  value={form.publication_link}
+                  onChange={(e) => setForm({ ...form, publication_link: e.target.value })}
+                  placeholder="e.g. https://scholar.google.com/citations?user=..."
+                />
+              </div>
+
               <Button type="submit" size="lg" className="w-full" disabled={saving}>
                 <Save size={18} />
                 {saving ? "Saving…" : existingId ? "Update Profile" : "Create Profile"}
