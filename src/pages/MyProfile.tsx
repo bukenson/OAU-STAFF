@@ -142,6 +142,7 @@ const MyProfile = () => {
       department: form.department.trim(),
       rank: form.rank || null,
       email: form.email.trim() || null,
+      phone: form.phone.trim() || null,
       office_location: form.office_location.trim() || null,
       bio: form.bio.trim() || null,
       image_url: form.image_url.trim() || null,
