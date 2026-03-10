@@ -121,7 +121,7 @@ const MyProfile = () => {
           qualifications: data.qualifications ?? [],
           research_interests: data.research_interests ?? [],
           publications: data.publications ?? [],
-          publication_link: (data as any).publication_link ?? "",
+          publication_link: (data as any).publication_link ?? [],
         });
       } else {
         setForm({ ...emptyForm, email: user.email ?? "" });
