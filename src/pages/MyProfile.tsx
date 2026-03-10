@@ -41,7 +41,7 @@ interface ProfileForm {
   qualifications: string[];
   research_interests: string[];
   publications: string[];
-  publication_link: string;
+  publication_link: string[];
 }
 
 const emptyForm: ProfileForm = {
