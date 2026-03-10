@@ -150,7 +150,7 @@ const MyProfile = () => {
       qualifications: form.qualifications.length ? form.qualifications : null,
       research_interests: form.research_interests.length ? form.research_interests : null,
       publications: form.publications.length ? form.publications : null,
-      publication_link: form.publication_link.trim() || null,
+      publication_link: form.publication_link.length ? form.publication_link : null,
     };
 
     let error;
