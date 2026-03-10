@@ -103,11 +103,13 @@ const MyProfile = () => {
 
       if (data) {
         setExistingId(data.id);
+        const isAcademic = ACADEMIC_RANKS.includes(data.rank ?? "");
         setForm({
           name: data.name,
           faculty: data.faculty,
           department: data.department,
           rank: data.rank ?? "",
+          staff_category: isAcademic ? "academic" : (data.rank ? "non-academic" : "academic"),
           email: data.email ?? user.email ?? "",
           office_location: data.office_location ?? "",
           bio: data.bio ?? "",
