@@ -11,7 +11,7 @@ const FeaturedStaff = () => {
     const bHas = b.image ? 0 : 1;
     return aHas - bHas;
   });
-  const featured = sorted.slice(0, 8);
+  const featured = sorted.slice(0, 16);
 
   return (
     <section id="staff" className="py-20 bg-background">
