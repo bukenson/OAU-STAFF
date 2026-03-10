@@ -64,6 +64,7 @@ const MyProfile = () => {
   const [newQualification, setNewQualification] = useState("");
   const [newInterest, setNewInterest] = useState("");
   const [newPublication, setNewPublication] = useState("");
+  const [newPubLink, setNewPubLink] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
