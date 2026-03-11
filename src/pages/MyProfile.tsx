@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -53,6 +54,7 @@ const emptyForm: ProfileForm = {
 const MyProfile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [form, setForm] = useState<ProfileForm>(emptyForm);
   const [existingId, setExistingId] = useState<string | null>(null);
@@ -166,6 +168,8 @@ const MyProfile = () => {
       toast({ title: "Error saving profile", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Profile saved!" });
+      queryClient.invalidateQueries({ queryKey: ["staff-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
     }
     setSaving(false);
   };

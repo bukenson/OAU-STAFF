@@ -108,12 +108,14 @@ const AdminDashboard = () => {
     toast({ title: "Staff member deleted" });
     queryClient.invalidateQueries({ queryKey: ["admin-staff"] });
     queryClient.invalidateQueries({ queryKey: ["staff"] });
+    queryClient.invalidateQueries({ queryKey: ["staff-stats"] });
   };
 
   const handleFormSave = () => {
     setEditing(null);
     queryClient.invalidateQueries({ queryKey: ["admin-staff"] });
     queryClient.invalidateQueries({ queryKey: ["staff"] });
+    queryClient.invalidateQueries({ queryKey: ["staff-stats"] });
   };
 
   return (
