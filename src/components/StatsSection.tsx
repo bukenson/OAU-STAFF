@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
 import { Building2, GitBranch, GraduationCap, Users } from "lucide-react";
-import { useStaffStats } from "@/hooks/useStaff";
+import { useStaffStats, useStaffRealtime } from "@/hooks/useStaff";
 
 const icons = [Building2, GitBranch, GraduationCap, Users];
 const labels = ["Faculties", "Departments", "Professors", "Total Staff"];
 
 const StatsSection = () => {
+  useStaffRealtime();
   const { data } = useStaffStats();
 
   const values = data

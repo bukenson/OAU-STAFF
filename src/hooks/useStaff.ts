@@ -64,7 +64,8 @@ export function useRanks() {
   };
 }
 
-export function useStaffStats() {
+/** Subscribe to realtime changes on staff_members and auto-invalidate queries */
+export function useStaffRealtime() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -84,7 +85,9 @@ export function useStaffStats() {
       supabase.removeChannel(channel);
     };
   }, [queryClient]);
+}
 
+export function useStaffStats() {
   return useQuery({
     queryKey: ["staff-stats"],
     staleTime: STALE_TIME,
