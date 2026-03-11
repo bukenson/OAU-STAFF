@@ -167,6 +167,8 @@ const MyProfile = () => {
       toast({ title: "Error saving profile", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Profile saved!" });
+      queryClient.invalidateQueries({ queryKey: ["staff-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["staff"] });
     }
     setSaving(false);
   };
