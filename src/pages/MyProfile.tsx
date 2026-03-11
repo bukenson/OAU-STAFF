@@ -54,6 +54,7 @@ const emptyForm: ProfileForm = {
 const MyProfile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const [form, setForm] = useState<ProfileForm>(emptyForm);
   const [existingId, setExistingId] = useState<string | null>(null);
