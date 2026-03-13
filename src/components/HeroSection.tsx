@@ -118,7 +118,7 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search for staff..."
-              className="w-full bg-card/10 backdrop-blur-md border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 rounded-lg pl-4 pr-12 py-3.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
+              className="w-full bg-white text-foreground placeholder:text-muted-foreground border border-border rounded-lg pl-4 pr-12 py-3.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
             />
             <button
               type="submit"
