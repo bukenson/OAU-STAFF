@@ -78,11 +78,22 @@ const StaffProfile = () => {
                 <h1 className="font-display text-3xl sm:text-4xl font-bold text-primary-foreground mb-2">
                   {staff.name}
                 </h1>
-                {staff.rank && (
-                  <span className="inline-block bg-accent text-accent-foreground text-sm font-semibold px-3 py-1 rounded-full mb-3">
-                    {staff.rank}
-                  </span>
-                )}
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  {staff.rank && (
+                    <span className="inline-block bg-accent text-accent-foreground text-sm font-semibold px-3 py-1 rounded-full">
+                      {staff.rank}
+                    </span>
+                  )}
+                  {(staff as any).status_availability && (staff as any).status_availability !== "Active" ? (
+                    <span className="inline-block bg-destructive text-destructive-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                      {(staff as any).status_availability}
+                    </span>
+                  ) : (staff as any).status_availability === "Active" ? (
+                    <span className="inline-block bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                      Active
+                    </span>
+                  ) : null}
+                </div>
                 <p className="text-primary-foreground/70 text-lg">
                   Faculty of {staff.faculty} · {staff.department}
                 </p>
