@@ -211,6 +211,29 @@ const StaffProfile = () => {
                   </motion.div>
                 )}
 
+                {/* Conferences */}
+                {(staff as any).conferences && (staff as any).conferences.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <Briefcase size={20} className="text-accent" />
+                      Journal/Workshops/Conferences
+                    </h2>
+                    <div className="space-y-3">
+                      {((staff as any).conferences as string[]).map((conf, i) => (
+                        <div
+                          key={i}
+                          className="text-muted-foreground text-sm leading-relaxed prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(conf) }}
+                        />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
                 {/* Empty state when no details */}
                 {!staff.bio && (!staff.publications || staff.publications.length === 0) && (
                   <div className="text-center py-12 text-muted-foreground">
