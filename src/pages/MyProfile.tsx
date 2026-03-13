@@ -4,16 +4,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
-import { Plus, X, Save, LogOut, Upload, Camera } from "lucide-react";
+import { LogOut, Save } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ProfilePhotoSection from "@/components/profile/ProfilePhotoSection";
+import BasicInfoSection from "@/components/profile/BasicInfoSection";
+
+import ArrayFieldSection from "@/components/profile/ArrayFieldSection";
+import ProfileLinksSection from "@/components/profile/ProfileLinksSection";
+import RichTextSection from "@/components/profile/RichTextSection";
 
 const FACULTIES = [
   "Administration", "Agriculture", "Arts", "Basic Medical Sciences",
@@ -26,29 +27,36 @@ const ACADEMIC_RANKS = [
   "Senior Lecturer", "Reader/Associate Professor", "Professor",
 ];
 
-type StaffCategory = "academic" | "non-academic";
+const STATUS_OPTIONS = ["Active", "On Leave", "Contract", "Sabbatical", "Retired"];
 
-interface ProfileForm {
+export type StaffCategory = "academic" | "non-academic";
+
+export interface ProfileForm {
   name: string;
-  faculty: string;
-  department: string;
-  rank: string;
-  staff_category: StaffCategory;
   email: string;
   phone: string;
+  faculty: string;
+  department: string;
+  status_availability: string;
+  staff_category: StaffCategory;
+  rank: string;
+  qualifications: string[];
+  specializations: string[];
+  publication_link: string[];
+  research_interests: string[];
   office_location: string;
   bio: string;
-  image_url: string;
-  qualifications: string[];
-  research_interests: string[];
   publications: string[];
-  publication_link: string[];
+  conferences: string[];
+  image_url: string;
 }
 
 const emptyForm: ProfileForm = {
-  name: "", faculty: "", department: "", rank: "", staff_category: "academic",
-  email: "", phone: "", office_location: "", bio: "", image_url: "",
-  qualifications: [], research_interests: [], publications: [], publication_link: [],
+  name: "", email: "", phone: "", faculty: "", department: "",
+  status_availability: "Active", staff_category: "academic", rank: "",
+  qualifications: [], specializations: [], publication_link: [],
+  research_interests: [], office_location: "", bio: "",
+  publications: [], conferences: [], image_url: "",
 };
 
 const MyProfile = () => {
@@ -60,48 +68,31 @@ const MyProfile = () => {
   const [existingId, setExistingId] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
-
-  // Temp inputs for array fields
-  const [newQualification, setNewQualification] = useState("");
-  const [newInterest, setNewInterest] = useState("");
-  const [newPublication, setNewPublication] = useState("");
-  const [newPubLink, setNewPubLink] = useState("");
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate("/auth");
-    }
+    if (!authLoading && !user) navigate("/auth");
   }, [authLoading, user, navigate]);
 
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      // First, try to find a profile already linked to this user
       let { data } = await supabase
         .from("staff_members")
         .select("*")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      // If no linked profile, try to claim one via edge function (bypasses RLS)
       if (!data && user.email) {
         const { data: claimResult, error: claimError } = await supabase.functions.invoke("claim-profile");
-
         if (!claimError && claimResult?.claimed) {
-          // Re-fetch the now-linked profile
           const { data: claimed } = await supabase
             .from("staff_members")
             .select("*")
             .eq("id", claimResult.id)
             .single();
-
           if (claimed) {
             data = claimed;
-            toast({
-              title: "Profile found!",
-              description: "Your existing staff profile has been linked to your account.",
-            });
+            toast({ title: "Profile found!", description: "Your existing staff profile has been linked to your account." });
           }
         }
       }
@@ -111,19 +102,22 @@ const MyProfile = () => {
         const isAcademic = ACADEMIC_RANKS.includes(data.rank ?? "");
         setForm({
           name: data.name,
-          faculty: data.faculty,
-          department: data.department,
-          rank: data.rank ?? "",
-          staff_category: isAcademic ? "academic" : (data.rank ? "non-academic" : "academic"),
           email: data.email ?? user.email ?? "",
           phone: data.phone ?? "",
+          faculty: data.faculty,
+          department: data.department,
+          status_availability: (data as any).status_availability ?? "Active",
+          staff_category: isAcademic ? "academic" : (data.rank ? "non-academic" : "academic"),
+          rank: data.rank ?? "",
+          qualifications: data.qualifications ?? [],
+          specializations: (data as any).specializations ?? [],
+          publication_link: data.publication_link ?? [],
+          research_interests: data.research_interests ?? [],
           office_location: data.office_location ?? "",
           bio: data.bio ?? "",
-          image_url: data.image_url ?? "",
-          qualifications: data.qualifications ?? [],
-          research_interests: data.research_interests ?? [],
           publications: data.publications ?? [],
-          publication_link: (data as any).publication_link ?? [],
+          conferences: (data as any).conferences ?? [],
+          image_url: data.image_url ?? "",
         });
       } else {
         setForm({ ...emptyForm, email: user.email ?? "" });
@@ -141,18 +135,21 @@ const MyProfile = () => {
     const payload = {
       user_id: user.id,
       name: form.name.trim(),
-      faculty: form.faculty,
-      department: form.department.trim(),
-      rank: form.rank || null,
       email: form.email.trim() || null,
       phone: form.phone.trim() || null,
+      faculty: form.faculty,
+      department: form.department.trim(),
+      status_availability: form.status_availability || "Active",
+      rank: form.rank || null,
+      qualifications: form.qualifications.length ? form.qualifications : null,
+      specializations: form.specializations.length ? form.specializations : null,
+      publication_link: form.publication_link.length ? form.publication_link : null,
+      research_interests: form.research_interests.length ? form.research_interests : null,
       office_location: form.office_location.trim() || null,
       bio: form.bio.trim() || null,
-      image_url: form.image_url.trim() || null,
-      qualifications: form.qualifications.length ? form.qualifications : null,
-      research_interests: form.research_interests.length ? form.research_interests : null,
       publications: form.publications.length ? form.publications : null,
-      publication_link: form.publication_link.length ? form.publication_link : null,
+      conferences: form.conferences.length ? form.conferences : null,
+      image_url: form.image_url.trim() || null,
     };
 
     let error;
@@ -174,15 +171,16 @@ const MyProfile = () => {
     setSaving(false);
   };
 
-  const addToArray = (field: keyof Pick<ProfileForm, "qualifications" | "research_interests" | "publications">, value: string, setter: (v: string) => void) => {
+  const updateForm = (updates: Partial<ProfileForm>) => setForm(f => ({ ...f, ...updates }));
+
+  const addToArray = (field: keyof ProfileForm, value: string) => {
     const trimmed = value.trim();
     if (!trimmed) return;
-    setForm((f) => ({ ...f, [field]: [...f[field], trimmed] }));
-    setter("");
+    setForm(f => ({ ...f, [field]: [...(f[field] as string[]), trimmed] }));
   };
 
-  const removeFromArray = (field: keyof Pick<ProfileForm, "qualifications" | "research_interests" | "publications">, index: number) => {
-    setForm((f) => ({ ...f, [field]: f[field].filter((_, i) => i !== index) }));
+  const removeFromArray = (field: keyof ProfileForm, index: number) => {
+    setForm(f => ({ ...f, [field]: (f[field] as string[]).filter((_, i) => i !== index) }));
   };
 
   if (authLoading || loadingProfile) {
@@ -204,204 +202,115 @@ const MyProfile = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <section className="flex-1 pt-24 pb-16 bg-background">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="font-display text-3xl font-bold text-foreground">
-                {existingId ? "Edit Your Profile" : "Create Your Profile"}
-              </h1>
-              <Button variant="outline" size="sm" onClick={() => { signOut(); navigate("/"); }}>
-                <LogOut size={16} /> Sign Out
-              </Button>
+            {/* Header */}
+            <div className="bg-primary text-primary-foreground text-center py-4 rounded-t-xl mb-0">
+              <h1 className="font-display text-xl font-bold">Edit Your Profile</h1>
             </div>
 
-            <form onSubmit={handleSave} className="space-y-8">
-              {/* Basic Information */}
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                <h2 className="font-display text-lg font-semibold text-card-foreground">Basic Information</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name *</Label>
-                    <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required placeholder="Dr. John Doe" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Staff Category</Label>
-                    <Select value={form.staff_category} onValueChange={(v: StaffCategory) => setForm({ ...form, staff_category: v, rank: "" })}>
-                      <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="academic">Academic Staff</SelectItem>
-                        <SelectItem value="non-academic">Non-Academic Staff</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="rank">Rank</Label>
-                    {form.staff_category === "academic" ? (
-                      <Select value={form.rank} onValueChange={(v) => setForm({ ...form, rank: v })}>
-                        <SelectTrigger><SelectValue placeholder="Select rank" /></SelectTrigger>
-                        <SelectContent>
-                          {ACADEMIC_RANKS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <Input id="rank" value={form.rank} onChange={(e) => setForm({ ...form, rank: e.target.value })} placeholder="e.g. Senior Administrative Officer" />
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="faculty">Faculty *</Label>
-                    <Select value={form.faculty} onValueChange={(v) => setForm({ ...form, faculty: v })}>
-                      <SelectTrigger><SelectValue placeholder="Select faculty" /></SelectTrigger>
-                      <SelectContent>
-                        {FACULTIES.map((f) => <SelectItem key={f} value={f}>{f}</SelectItem>)}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="department">Department *</Label>
-                    <Input id="department" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} required placeholder="Computer Science" />
-                  </div>
-                </div>
+            <form onSubmit={handleSave} className="bg-card border border-border border-t-0 rounded-b-xl p-6 sm:p-8 space-y-6">
+              {/* Sign out link */}
+              <div className="flex justify-end">
+                <Button variant="ghost" size="sm" onClick={() => { signOut(); navigate("/"); }}>
+                  <LogOut size={16} /> Sign Out
+                </Button>
               </div>
 
-              {/* Contact */}
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                <h2 className="font-display text-lg font-semibold text-card-foreground">Contact Information</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="you@oauife.edu.ng" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone (optional)</Label>
-                    <Input id="phone" type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+234 XXX XXX XXXX" />
-                  </div>
-                  <div className="space-y-2 sm:col-span-2">
-                    <Label htmlFor="office">Office Location</Label>
-                    <Input id="office" value={form.office_location} onChange={(e) => setForm({ ...form, office_location: e.target.value })} placeholder="Room 204, Faculty Building" />
-                  </div>
-                </div>
-              </div>
+              {/* Photo Upload */}
+              <ProfilePhotoSection
+                imageUrl={form.image_url}
+                userName={form.name}
+                userId={user?.id}
+                onImageChange={(url) => updateForm({ image_url: url })}
+              />
 
-              {/* Profile Photo */}
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                <h2 className="font-display text-lg font-semibold text-card-foreground">Profile Photo</h2>
-                <div className="flex items-start gap-6">
-                  <div className="w-32 h-40 rounded-xl overflow-hidden border-2 border-accent/30 shrink-0 bg-muted flex items-center justify-center">
-                    {form.image_url ? (
-                      <img src={form.image_url} alt="Preview" className="w-full h-full object-cover object-top" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary/10">
-                        <span className="font-display text-4xl font-bold text-primary/30">
-                          {form.name?.charAt(0) || "?"}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-3 flex-1">
-                    <p className="text-sm text-muted-foreground">Upload a professional photo (JPG, PNG, max 5MB)</p>
-                    <label className="inline-flex items-center gap-2 cursor-pointer bg-secondary text-secondary-foreground text-sm font-medium px-4 py-2 rounded-lg hover:bg-secondary/80 transition-colors">
-                      <Upload size={16} />
-                      {uploading ? "Uploading…" : "Choose Photo"}
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        className="sr-only"
-                        disabled={uploading}
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file || !user) return;
-                          if (file.size > 5 * 1024 * 1024) {
-                            toast({ title: "File too large", description: "Max 5MB", variant: "destructive" });
-                            return;
-                          }
-                          setUploading(true);
-                          const ext = file.name.split(".").pop();
-                          const path = `${user.id}/avatar.${ext}`;
-                          const { error } = await supabase.storage
-                            .from("staff-photos")
-                            .upload(path, file, { upsert: true });
-                          if (error) {
-                            toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-                          } else {
-                            const { data: urlData } = supabase.storage.from("staff-photos").getPublicUrl(path);
-                            setForm((f) => ({ ...f, image_url: urlData.publicUrl + "?t=" + Date.now() }));
-                            toast({ title: "Photo uploaded!" });
-                          }
-                          setUploading(false);
-                        }}
-                      />
-                    </label>
-                    {form.image_url && (
-                      <button
-                        type="button"
-                        onClick={() => setForm((f) => ({ ...f, image_url: "" }))}
-                        className="block text-xs text-destructive hover:text-destructive/80"
-                      >
-                        Remove photo
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+              {/* Name */}
+              <BasicInfoSection
+                form={form}
+                updateForm={updateForm}
+                faculties={FACULTIES}
+                academicRanks={ACADEMIC_RANKS}
+                statusOptions={STATUS_OPTIONS}
+              />
 
-              {/* Bio */}
-              <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-                <h2 className="font-display text-lg font-semibold text-card-foreground">Biography</h2>
-                <Textarea
-                  value={form.bio}
-                  onChange={(e) => setForm({ ...form, bio: e.target.value })}
-                  placeholder="Write a brief bio about your academic career, research focus, and teaching experience…"
-                  rows={5}
-                />
-              </div>
-
-              {/* Qualifications */}
-              <ArraySection
-                title="Qualifications"
+              {/* Academic Qualifications */}
+              <ArrayFieldSection
+                label="Academic Qualifications"
                 items={form.qualifications}
-                inputValue={newQualification}
-                setInputValue={setNewQualification}
-                placeholder="e.g. Ph.D. Computer Science, University of Lagos"
-                onAdd={() => addToArray("qualifications", newQualification, setNewQualification)}
+                placeholder="Enter a qualification (e.g., PhD in Computer Science)"
+                buttonLabel="Add More Qualifications"
+                onAdd={(val) => addToArray("qualifications", val)}
                 onRemove={(i) => removeFromArray("qualifications", i)}
               />
 
-              {/* Research Interests */}
-              <ArraySection
-                title="Research Interests"
-                items={form.research_interests}
-                inputValue={newInterest}
-                setInputValue={setNewInterest}
-                placeholder="e.g. Machine Learning"
-                onAdd={() => addToArray("research_interests", newInterest, setNewInterest)}
-                onRemove={(i) => removeFromArray("research_interests", i)}
+              {/* Area(s) of Specialization */}
+              <ArrayFieldSection
+                label="Area(s) of Specialization"
+                items={form.specializations}
+                placeholder="Enter a specialization (e.g., Artificial Intelligence)"
+                buttonLabel="Add More Specializations"
+                onAdd={(val) => addToArray("specializations", val)}
+                onRemove={(i) => removeFromArray("specializations", i)}
+              />
+
+              {/* Profile Links */}
+              <ProfileLinksSection
+                links={form.publication_link}
+                onAdd={(val) => addToArray("publication_link", val)}
+                onRemove={(i) => removeFromArray("publication_link", i)}
+              />
+
+              {/* Research Interest */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-primary">Research Interest</label>
+                <input
+                  className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  value={form.research_interests.join(", ")}
+                  onChange={(e) => updateForm({ research_interests: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
+                  placeholder="Research Interest"
+                />
+              </div>
+
+              {/* Office Address */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-primary">Office Address</label>
+                <input
+                  className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                  value={form.office_location}
+                  onChange={(e) => updateForm({ office_location: e.target.value })}
+                  placeholder="Office Location"
+                />
+              </div>
+
+              {/* Career Summary/Bio */}
+              <RichTextSection
+                label="Career Summary/Bio (Make use of Bold, Italics, Underline for standout information)"
+                value={form.bio}
+                onChange={(val) => updateForm({ bio: val })}
+                placeholder="Enter your career summary here"
               />
 
               {/* Publications */}
-              <ArraySection
-                title="Publications"
-                items={form.publications}
-                inputValue={newPublication}
-                setInputValue={setNewPublication}
-                placeholder="e.g. Doe, J. (2024). Title. Journal Name, 12(3), 45-67."
-                onAdd={() => addToArray("publications", newPublication, setNewPublication)}
-                onRemove={(i) => removeFromArray("publications", i)}
+              <RichTextSection
+                label="Publications (You can make it an ordered or unordered list)"
+                value={form.publications.join("\n")}
+                onChange={(val) => updateForm({ publications: val.split("\n").filter(Boolean) })}
+                placeholder="Enter your publications"
               />
 
-              {/* Publication Links */}
-              <ArraySection
-                title="Publication Profile Links"
-                items={form.publication_link}
-                inputValue={newPubLink}
-                setInputValue={setNewPubLink}
-                placeholder="e.g. https://scholar.google.com/citations?user=..."
-                onAdd={() => addToArray("publication_link" as any, newPubLink, setNewPubLink)}
-                onRemove={(i) => removeFromArray("publication_link" as any, i)}
+              {/* Journal/Workshops/Conferences */}
+              <RichTextSection
+                label="Journal/Workshops/Conferences (List your Journal/Workshops/Conferences attended in Last five (5) years.)"
+                value={form.conferences.join("\n")}
+                onChange={(val) => updateForm({ conferences: val.split("\n").filter(Boolean) })}
+                placeholder="Enter your Journals, Articles, conferences attended in last 5 years"
               />
 
+              {/* Submit */}
               <Button type="submit" size="lg" className="w-full" disabled={saving}>
                 <Save size={18} />
-                {saving ? "Saving…" : existingId ? "Update Profile" : "Create Profile"}
+                {saving ? "Saving…" : "Submit"}
               </Button>
             </form>
           </motion.div>
@@ -411,44 +320,5 @@ const MyProfile = () => {
     </div>
   );
 };
-
-function ArraySection({ title, items, inputValue, setInputValue, placeholder, onAdd, onRemove }: {
-  title: string;
-  items: string[];
-  inputValue: string;
-  setInputValue: (v: string) => void;
-  placeholder: string;
-  onAdd: () => void;
-  onRemove: (i: number) => void;
-}) {
-  return (
-    <div className="bg-card border border-border rounded-xl p-6 space-y-4">
-      <h2 className="font-display text-lg font-semibold text-card-foreground">{title}</h2>
-      <div className="flex gap-2">
-        <Input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder={placeholder}
-          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onAdd(); } }}
-        />
-        <Button type="button" variant="secondary" size="icon" onClick={onAdd}>
-          <Plus size={18} />
-        </Button>
-      </div>
-      {items.length > 0 && (
-        <ul className="space-y-2">
-          {items.map((item, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground bg-muted rounded-lg px-3 py-2">
-              <span className="flex-1">{item}</span>
-              <button type="button" onClick={() => onRemove(i)} className="text-destructive hover:text-destructive/80 shrink-0 mt-0.5">
-                <X size={14} />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-}
 
 export default MyProfile;
