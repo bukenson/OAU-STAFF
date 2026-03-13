@@ -11,7 +11,7 @@ import { LogOut, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProfilePhotoSection from "@/components/profile/ProfilePhotoSection";
 import BasicInfoSection from "@/components/profile/BasicInfoSection";
-import AcademicSection from "@/components/profile/AcademicSection";
+
 import ArrayFieldSection from "@/components/profile/ArrayFieldSection";
 import ProfileLinksSection from "@/components/profile/ProfileLinksSection";
 import RichTextSection from "@/components/profile/RichTextSection";
