@@ -128,7 +128,10 @@ const StaffProfile = () => {
                       <BookOpen size={20} className="text-accent" />
                       Biography
                     </h2>
-                    <p className="text-muted-foreground leading-relaxed">{staff.bio}</p>
+                    <div
+                      className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(staff.bio) }}
+                    />
                   </motion.div>
                 )}
 
