@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil, ExternalLink } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil, ExternalLink, Briefcase } from "lucide-react";
+import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
