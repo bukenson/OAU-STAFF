@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil, ExternalLink } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil, ExternalLink, Briefcase } from "lucide-react";
+import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -127,7 +128,10 @@ const StaffProfile = () => {
                       <BookOpen size={20} className="text-accent" />
                       Biography
                     </h2>
-                    <p className="text-muted-foreground leading-relaxed">{staff.bio}</p>
+                    <div
+                      className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(staff.bio) }}
+                    />
                   </motion.div>
                 )}
 
@@ -166,17 +170,15 @@ const StaffProfile = () => {
                       <BookOpen size={20} className="text-accent" />
                       Publications
                     </h2>
-                    <ul className="space-y-3">
+                    <div className="space-y-3">
                       {staff.publications.map((pub, i) => (
-                        <li
+                        <div
                           key={i}
-                          className="flex gap-3 text-muted-foreground text-sm leading-relaxed"
-                        >
-                          <span className="text-accent font-semibold shrink-0">{i + 1}.</span>
-                          {pub}
-                        </li>
+                          className="text-muted-foreground text-sm leading-relaxed prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(pub) }}
+                        />
                       ))}
-                    </ul>
+                    </div>
                   </motion.div>
                 )}
 
@@ -206,6 +208,29 @@ const StaffProfile = () => {
                         </li>
                       ))}
                     </ul>
+                  </motion.div>
+                )}
+
+                {/* Conferences */}
+                {(staff as any).conferences && (staff as any).conferences.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <Briefcase size={20} className="text-accent" />
+                      Journal/Workshops/Conferences
+                    </h2>
+                    <div className="space-y-3">
+                      {((staff as any).conferences as string[]).map((conf, i) => (
+                        <div
+                          key={i}
+                          className="text-muted-foreground text-sm leading-relaxed prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(conf) }}
+                        />
+                      ))}
+                    </div>
                   </motion.div>
                 )}
 
