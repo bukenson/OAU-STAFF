@@ -170,17 +170,15 @@ const StaffProfile = () => {
                       <BookOpen size={20} className="text-accent" />
                       Publications
                     </h2>
-                    <ul className="space-y-3">
+                    <div className="space-y-3">
                       {staff.publications.map((pub, i) => (
-                        <li
+                        <div
                           key={i}
-                          className="flex gap-3 text-muted-foreground text-sm leading-relaxed"
-                        >
-                          <span className="text-accent font-semibold shrink-0">{i + 1}.</span>
-                          {pub}
-                        </li>
+                          className="text-muted-foreground text-sm leading-relaxed prose prose-sm max-w-none"
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(pub) }}
+                        />
                       ))}
-                    </ul>
+                    </div>
                   </motion.div>
                 )}
 
