@@ -135,6 +135,30 @@ const StaffProfile = () => {
                   </motion.div>
                 )}
 
+                {/* Specializations */}
+                {(staff as any).specializations && (staff as any).specializations.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.15 }}
+                  >
+                    <h2 className="font-display text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <FlaskConical size={20} className="text-accent" />
+                      Area(s) of Specialization
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {((staff as any).specializations as string[]).map((spec, i) => (
+                        <span
+                          key={i}
+                          className="bg-secondary text-secondary-foreground px-3 py-1.5 rounded-full text-sm font-medium"
+                        >
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+
                 {/* Research Interests */}
                 {staff.research_interests && staff.research_interests.length > 0 && (
                   <motion.div
