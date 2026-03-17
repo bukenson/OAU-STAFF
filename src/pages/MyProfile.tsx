@@ -206,7 +206,12 @@ const MyProfile = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             {/* Header */}
             <div className="bg-primary text-primary-foreground text-center py-4 rounded-t-xl mb-0">
-              <h1 className="font-display text-xl font-bold">Edit Your Profile</h1>
+              <h1 className="font-display text-xl font-bold">
+                {existingId ? "Welcome back!" : "Create Your Profile"}
+              </h1>
+              <p className="text-primary-foreground/80 text-sm mt-1">
+                {existingId ? "Update your staff profile details below" : "Fill in your details to set up your staff profile"}
+              </p>
             </div>
 
             <form onSubmit={handleSave} className="bg-card border border-border border-t-0 rounded-b-xl p-6 sm:p-8 space-y-6">
