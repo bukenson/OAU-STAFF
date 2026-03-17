@@ -16,6 +16,7 @@ import BasicInfoSection from "@/components/profile/BasicInfoSection";
 import ArrayFieldSection from "@/components/profile/ArrayFieldSection";
 import ProfileLinksSection from "@/components/profile/ProfileLinksSection";
 import RichTextSection from "@/components/profile/RichTextSection";
+import ChipInput from "@/components/profile/ChipInput";
 
 const FACULTIES = [
   "Administration", "Agriculture", "Arts", "Basic Medical Sciences",
@@ -286,16 +287,13 @@ const MyProfile = () => {
               />
 
               {/* Research Interest */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-primary">Research Interest</label>
-                <input
-                  className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-                  value={form.research_interests.join(", ")}
-                  onChange={(e) => updateForm({ research_interests: e.target.value.split(",").map(s => s.trimStart()) })}
-                  onBlur={(e) => updateForm({ research_interests: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
-                  placeholder="Comma-separated (e.g., Machine Learning, Data Science)"
-                />
-              </div>
+              <ChipInput
+                label="Research Interest"
+                items={form.research_interests}
+                placeholder="e.g., Machine Learning"
+                onAdd={(val) => addToArray("research_interests", val)}
+                onRemove={(i) => removeFromArray("research_interests", i)}
+              />
 
               {/* Office Address */}
               <div className="space-y-2">
