@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import confetti from "canvas-confetti";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -153,6 +154,7 @@ const MyProfile = () => {
     };
 
     let error;
+    const isNewProfile = !existingId;
     if (existingId) {
       ({ error } = await supabase.from("staff_members").update(payload).eq("id", existingId));
     } else {
@@ -164,7 +166,15 @@ const MyProfile = () => {
     if (error) {
       toast({ title: "Error saving profile", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Profile saved!" });
+      toast({ title: isNewProfile ? "🎉 Profile created!" : "Profile saved!" });
+      if (isNewProfile) {
+        confetti({
+          particleCount: 150,
+          spread: 80,
+          origin: { y: 0.6 },
+          colors: ["#1b5e20", "#4caf50", "#81c784", "#ffb300", "#fff"],
+        });
+      }
       queryClient.invalidateQueries({ queryKey: ["staff-stats"] });
       queryClient.invalidateQueries({ queryKey: ["staff"] });
     }
