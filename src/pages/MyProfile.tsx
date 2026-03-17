@@ -291,8 +291,9 @@ const MyProfile = () => {
                 <input
                   className="w-full border border-input bg-background rounded-md px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                   value={form.research_interests.join(", ")}
-                  onChange={(e) => updateForm({ research_interests: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
-                  placeholder="Research Interest"
+                  onChange={(e) => updateForm({ research_interests: e.target.value.split(",").map(s => s.trimStart()) })}
+                  onBlur={(e) => updateForm({ research_interests: e.target.value.split(",").map(s => s.trim()).filter(Boolean) })}
+                  placeholder="Comma-separated (e.g., Machine Learning, Data Science)"
                 />
               </div>
 
