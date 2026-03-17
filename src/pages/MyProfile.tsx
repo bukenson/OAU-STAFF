@@ -75,8 +75,12 @@ const MyProfile = () => {
     if (!authLoading && !user) navigate("/auth");
   }, [authLoading, user, navigate]);
 
+  const loadedForUser = useRef<string | null>(null);
+
   useEffect(() => {
-    if (!user) return;
+    if (!user || loadedForUser.current === user.id) return;
+    loadedForUser.current = user.id;
+
     const load = async () => {
       let { data } = await supabase
         .from("staff_members")
