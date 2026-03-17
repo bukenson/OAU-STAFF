@@ -135,7 +135,7 @@ const StaffList = () => {
                   <select
                     value={departmentFilter}
                     onChange={(e) => { setDepartmentFilter(e.target.value); setPage(1); }}
-                    className="bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground rounded-lg px-4 py-2.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
+                    className="bg-white border border-primary-foreground/20 text-foreground rounded-lg px-4 py-2.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
                   >
                     <option value="" className="text-foreground">All Departments</option>
                     {departments.map((d) => (
