@@ -15,6 +15,7 @@ const StaffProfile = () => {
   const { data: staff, isLoading, error } = useStaffProfile(id);
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
 
   // Determine if the logged-in user owns this profile
   const isOwner = user && staff?.user_id === user.id;
