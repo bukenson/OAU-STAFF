@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { LogOut, Save } from "lucide-react";
+import { LogOut, Save, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProfilePhotoSection from "@/components/profile/ProfilePhotoSection";
 import BasicInfoSection from "@/components/profile/BasicInfoSection";
@@ -226,10 +226,19 @@ const MyProfile = () => {
 
             <form onSubmit={handleSave} className="bg-card border border-border border-t-0 rounded-b-xl p-6 sm:p-8 space-y-6">
               {/* Sign out link */}
-              <div className="flex justify-end">
-                <Button variant="ghost" size="sm" onClick={() => { signOut(); navigate("/"); }}>
-                  <LogOut size={16} /> Sign Out
-                </Button>
+              <div className="flex items-center justify-between">
+                {existingId && (
+                  <Button variant="outline" size="sm" asChild>
+                    <a href={`/staff/${existingId}`} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink size={16} /> View Public Profile
+                    </a>
+                  </Button>
+                )}
+                <div className="ml-auto">
+                  <Button variant="ghost" size="sm" onClick={() => { signOut(); navigate("/"); }}>
+                    <LogOut size={16} /> Sign Out
+                  </Button>
+                </div>
               </div>
 
               {/* Photo Upload */}
