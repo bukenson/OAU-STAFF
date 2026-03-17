@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
+import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { LogOut, Save, ExternalLink } from "lucide-react";
