@@ -16,6 +16,7 @@ import BasicInfoSection from "@/components/profile/BasicInfoSection";
 import ArrayFieldSection from "@/components/profile/ArrayFieldSection";
 import ProfileLinksSection from "@/components/profile/ProfileLinksSection";
 import RichTextSection from "@/components/profile/RichTextSection";
+import ChipInput from "@/components/profile/ChipInput";
 
 const FACULTIES = [
   "Administration", "Agriculture", "Arts", "Basic Medical Sciences",
