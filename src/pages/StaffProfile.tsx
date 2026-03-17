@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil, ExternalLink, Briefcase } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil, ExternalLink, Briefcase, Share2, Check } from "lucide-react";
+import { useState } from "react";
 import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -14,6 +15,7 @@ const StaffProfile = () => {
   const { data: staff, isLoading, error } = useStaffProfile(id);
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
 
   // Determine if the logged-in user owns this profile
   const isOwner = user && staff?.user_id === user.id;
@@ -103,18 +105,31 @@ const StaffProfile = () => {
                     {staff.office_location}
                   </p>
                 )}
-                {/* Claim / Edit button */}
-                {isOwner && (
+                <div className="flex flex-wrap items-center gap-2 mt-4">
                   <Button
                     size="sm"
-                    variant="secondary"
-                    className="mt-4"
-                    onClick={() => navigate("/my-profile")}
+                    variant="outline"
+                    className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
                   >
-                    <Pencil size={14} />
-                    Edit Your Profile
+                    {copied ? <Check size={14} /> : <Share2 size={14} />}
+                    {copied ? "Link Copied!" : "Share Profile"}
                   </Button>
-                )}
+                  {isOwner && (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => navigate("/my-profile")}
+                    >
+                      <Pencil size={14} />
+                      Edit Your Profile
+                    </Button>
+                  )}
+                </div>
                 {/* Claim button hidden for now */}
               </div>
             </motion.div>
