@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
-import { LogOut, Save } from "lucide-react";
+import { LogOut, Save, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProfilePhotoSection from "@/components/profile/ProfilePhotoSection";
 import BasicInfoSection from "@/components/profile/BasicInfoSection";
