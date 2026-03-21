@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import oauLogo from "@/assets/oaulogo.png";
@@ -36,14 +36,11 @@ const Auth = () => {
   }
 
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin,
-        queryParams: {
-          hd: "oauife.edu.ng",
-          prompt: "select_account",
-        },
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+      extraParams: {
+        hd: "oauife.edu.ng",
+        prompt: "select_account",
       },
     });
 
