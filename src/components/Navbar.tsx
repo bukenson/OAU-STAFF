@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, UserPlus, Shield } from "lucide-react";
+import { Menu, X, UserPlus, Shield, LogOut, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
