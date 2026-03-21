@@ -3,9 +3,16 @@
   publish = "dist"
 
 [[redirects]]
+  from = "/~oauth"
+  to = "/index.html"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = true
 
 [[headers]]
   for = "/assets/*"
