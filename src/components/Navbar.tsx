@@ -137,14 +137,34 @@ const Navbar = () => {
                   Admin
                 </Link>
               )}
-              <Link
-                to={user ? "/my-profile" : "/auth"}
-                onClick={() => setOpen(false)}
-                className="inline-flex items-center gap-2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-2 rounded-full"
-              >
-                <UserPlus size={16} />
-                {user ? "My Profile" : "Sign In"}
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    to="/my-profile"
+                    onClick={() => setOpen(false)}
+                    className="inline-flex items-center gap-2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-2 rounded-full"
+                  >
+                    <User size={16} />
+                    My Profile
+                  </Link>
+                  <button
+                    onClick={() => { setOpen(false); signOut(); }}
+                    className="flex items-center gap-2 text-primary-foreground/80 hover:text-accent transition-colors text-sm font-medium py-2"
+                  >
+                    <LogOut size={15} />
+                    Sign Out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex items-center gap-2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-2 rounded-full"
+                >
+                  <UserPlus size={16} />
+                  Sign In
+                </Link>
+              )}
             </div>
           </motion.div>
         )}
