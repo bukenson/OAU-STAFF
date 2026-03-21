@@ -3,7 +3,7 @@
   publish = "dist"
 
 [[redirects]]
-  from = "/~oauth"
+  from = "/~oauth/*"
   to = "/index.html"
   status = 200
   force = true
