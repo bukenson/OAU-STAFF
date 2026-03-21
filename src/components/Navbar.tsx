@@ -58,13 +58,32 @@ const Navbar = () => {
               Admin
             </Link>
           )}
-          <Link
-            to={user ? "/my-profile" : "/auth"}
-            className="inline-flex items-center gap-2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-2 rounded-full hover:bg-accent/90 transition-colors"
-          >
-            <UserPlus size={16} />
-            {user ? "My Profile" : "Sign In"}
-          </Link>
+          {user ? (
+            <>
+              <Link
+                to="/my-profile"
+                className="inline-flex items-center gap-2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-2 rounded-full hover:bg-accent/90 transition-colors"
+              >
+                <User size={16} />
+                My Profile
+              </Link>
+              <button
+                onClick={signOut}
+                className="inline-flex items-center gap-1.5 text-primary-foreground/80 hover:text-accent transition-colors text-sm font-medium"
+              >
+                <LogOut size={15} />
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-2 bg-accent text-accent-foreground text-sm font-semibold px-4 py-2 rounded-full hover:bg-accent/90 transition-colors"
+            >
+              <UserPlus size={16} />
+              Sign In
+            </Link>
+          )}
         </div>
 
         <button
