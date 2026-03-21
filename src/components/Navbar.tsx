@@ -14,7 +14,7 @@ const navLinks = [
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { data: isAdmin } = useIsAdmin();
 
   return (
