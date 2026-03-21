@@ -36,14 +36,11 @@ const Auth = () => {
   }
 
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin,
-        queryParams: {
-          hd: "oauife.edu.ng",
-          prompt: "select_account",
-        },
+    const { error } = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+      extraParams: {
+        hd: "oauife.edu.ng",
+        prompt: "select_account",
       },
     });
 
