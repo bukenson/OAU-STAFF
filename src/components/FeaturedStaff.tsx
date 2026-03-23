@@ -69,6 +69,7 @@ const FeaturedStaff = () => {
           ) : isMobile ? (
             <Carousel
               opts={{ align: "start", loop: true }}
+              plugins={[Autoplay({ delay: 3000, stopOnInteraction: true })]}
               setApi={setApi}
               className="w-full"
             >
