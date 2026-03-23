@@ -61,12 +61,6 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
               <span className="truncate">{staff.email}</span>
             </span>
           )}
-          {staff.office_location && (
-            <span className="flex items-center gap-2 text-xs text-muted-foreground opacity-0 max-h-0 group-hover:opacity-100 group-hover:max-h-8 transition-all duration-300 overflow-hidden">
-              <MapPin size={14} className="shrink-0 text-accent" />
-              <span className="truncate">{staff.office_location}</span>
-            </span>
-          )}
         </div>
       </div>
     </div>
