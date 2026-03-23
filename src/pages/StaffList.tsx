@@ -188,7 +188,7 @@ const StaffList = () => {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="bg-card rounded-xl border border-border overflow-hidden">
                   <Skeleton className="h-48 w-full" />
@@ -201,7 +201,7 @@ const StaffList = () => {
               ))}
             </div>
           ) : paginatedStaff.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {paginatedStaff.map((staff, i) => (
                 <StaffCard key={staff.name + i} staff={staff} index={i} />
               ))}

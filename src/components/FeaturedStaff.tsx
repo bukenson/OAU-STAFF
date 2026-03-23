@@ -32,7 +32,7 @@ const FeaturedStaff = () => {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="bg-card rounded-xl border border-border overflow-hidden">
                   <Skeleton className="aspect-[3/4] w-full" />
@@ -50,7 +50,7 @@ const FeaturedStaff = () => {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6"
+className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
             >
               {recentlyAdded.map((s, i) => (
                 <StaffCard key={s.id || s.name + i} staff={s} index={i} />
@@ -73,7 +73,7 @@ const FeaturedStaff = () => {
           </div>
 
           {isLoading ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="bg-card rounded-xl border border-border overflow-hidden">
                   <Skeleton className="aspect-[3/4] w-full" />
@@ -91,7 +91,7 @@ const FeaturedStaff = () => {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6"
+className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
             >
               {featured.map((s, i) => (
                 <StaffCard key={s.id || s.name + i} staff={s} index={i} />
