@@ -50,8 +50,8 @@ const StatsSection = () => {
   const { data } = useStaffStats();
 
   const values: (number | string)[] = data
-    ? [14, 97, 400, data.totalStaff]
-    : [14, 97, 400, "—"];
+    ? [14, 97, data.professors, data.totalStaff]
+    : [14, 97, "—", "—"];
 
   return (
     <section className="bg-stats-bg py-12">
