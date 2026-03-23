@@ -6,7 +6,11 @@ import { motion } from "framer-motion";
 
 const FeaturedStaff = () => {
   const { data: staff, isLoading } = useStaff();
-  const sorted = (staff ?? []).sort((a, b) => {
+  const allStaff = staff ?? [];
+  // Recently added: first 8 from the query (already sorted by created_at desc)
+  const recentlyAdded = allStaff.slice(0, 8);
+  // Featured: prioritize those with images
+  const sorted = [...allStaff].sort((a, b) => {
     const aHas = a.image ? 0 : 1;
     const bHas = b.image ? 0 : 1;
     return aHas - bHas;
