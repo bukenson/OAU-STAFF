@@ -68,6 +68,7 @@ const FeaturedStaff = () => {
           ) : isMobile ? (
             <Carousel
               opts={{ align: "start", loop: true }}
+              setApi={setApi}
               className="w-full"
             >
               <CarouselContent className="-ml-4">
@@ -77,8 +78,22 @@ const FeaturedStaff = () => {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <div className="flex justify-center gap-2 mt-6">
+              <div className="flex justify-center items-center gap-3 mt-6">
                 <CarouselPrevious className="static translate-y-0" />
+                <div className="flex gap-1.5">
+                  {Array.from({ length: count }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => api?.scrollTo(i)}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        i === current
+                          ? "bg-primary w-6"
+                          : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                      }`}
+                      aria-label={`Go to slide ${i + 1}`}
+                    />
+                  ))}
+                </div>
                 <CarouselNext className="static translate-y-0" />
               </div>
             </Carousel>
