@@ -1,3 +1,4 @@
+import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import StaffCard from "./StaffCard";
 import { useStaff } from "@/hooks/useStaff";
@@ -11,10 +12,23 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import type { UseEmblaCarouselType } from "embla-carousel-react";
+
+type CarouselApi = UseEmblaCarouselType[1];
 
 const FeaturedStaff = () => {
   const { data: staff, isLoading } = useStaff();
   const isMobile = useIsMobile();
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
+    api.on("select", () => setCurrent(api.selectedScrollSnap()));
+  }, [api]);
   const allStaff = staff ?? [];
   const recentlyAdded = allStaff.slice(0, 4);
   const sorted = [...allStaff].sort((a, b) => {
