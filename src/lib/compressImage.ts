@@ -6,7 +6,7 @@ export async function compressImage(
   file: File,
   maxWidth = 800,
   maxHeight = 800,
-  maxSizeKB = 200
+  maxSizeKB = 100
 ): Promise<File> {
   const bitmap = await createImageBitmap(file);
   let { width, height } = bitmap;
