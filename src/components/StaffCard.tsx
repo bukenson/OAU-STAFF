@@ -23,7 +23,7 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
 
   const card = (
-    <div className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+    <div className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
         {staff.image && !imgError ? (
           <img
@@ -47,19 +47,21 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
         )}
       </div>
 
-      <div className="p-5">
+      <div className="p-5 flex flex-col flex-1">
         <h3 className="font-display text-lg font-semibold text-card-foreground mb-1 line-clamp-1">
           {staff.name}
         </h3>
-        <p className="text-sm text-accent font-medium mb-2">{staff.faculty}</p>
-        <p className="text-sm text-muted-foreground mb-3">{staff.department}</p>
+        <p className="text-sm text-accent font-medium mb-2 line-clamp-1">{staff.faculty}</p>
+        <p className="text-sm text-muted-foreground mb-3 line-clamp-1">{staff.department}</p>
 
-        <div className="pt-3 border-t border-border space-y-2">
-          {staff.email && (
+        <div className="pt-3 border-t border-border mt-auto min-h-[2rem] flex items-center">
+          {staff.email ? (
             <span className="flex items-center gap-2 text-xs text-muted-foreground">
               <Mail size={14} className="shrink-0" />
               <span className="truncate">{staff.email}</span>
             </span>
+          ) : (
+            <span className="text-xs text-muted-foreground/50 italic">No email listed</span>
           )}
         </div>
       </div>
