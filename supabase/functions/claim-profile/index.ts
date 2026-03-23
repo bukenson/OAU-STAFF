@@ -96,7 +96,8 @@ Deno.serve(async (req) => {
       .eq("id", match.id);
 
     if (updateError) {
-      return new Response(JSON.stringify({ error: updateError.message }), {
+      console.error("Profile claim update error:", updateError);
+      return new Response(JSON.stringify({ error: "An internal error occurred." }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
