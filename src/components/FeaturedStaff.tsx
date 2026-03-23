@@ -42,7 +42,7 @@ const FeaturedStaff = () => {
   return (
     <>
       {/* Recently Added Staff */}
-      <section className="py-20 bg-muted/30">
+      <section id="recently-added" className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <p className="text-accent font-medium tracking-[0.2em] uppercase text-sm mb-3">

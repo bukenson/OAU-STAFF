@@ -183,6 +183,8 @@ const MyProfile = () => {
       }
       queryClient.invalidateQueries({ queryKey: ["staff-stats"] });
       queryClient.invalidateQueries({ queryKey: ["staff"] });
+      // Redirect to home page Recently Added section
+      setTimeout(() => navigate("/#recently-added"), 1200);
     }
     setSaving(false);
   };
