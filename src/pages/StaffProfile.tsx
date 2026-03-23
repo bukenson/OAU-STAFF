@@ -108,8 +108,7 @@ const StaffProfile = () => {
                 <div className="flex flex-wrap items-center gap-2 mt-4">
                   <Button
                     size="sm"
-                    variant="outline"
-                    className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+                    variant="secondary"
                     onClick={() => {
                       navigator.clipboard.writeText(window.location.href);
                       setCopied(true);
