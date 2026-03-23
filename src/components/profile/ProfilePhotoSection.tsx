@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
 import { compressImage } from "@/lib/compressImage";
-import { Upload } from "lucide-react";
 
 interface Props {
   imageUrl: string;
