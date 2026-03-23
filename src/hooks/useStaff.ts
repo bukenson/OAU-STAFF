@@ -121,7 +121,7 @@ export function useStaffProfile(id: string | undefined) {
       if (!id) return null;
       const { data, error } = await supabase
         .from("staff_members")
-        .select("*")
+        .select("id, name, faculty, department, email, rank, image_url, research_interests, office_location, bio, qualifications, publications, specializations, conferences, publication_link, status_availability, user_id, created_at, updated_at")
         .eq("id", id)
         .maybeSingle();
 
