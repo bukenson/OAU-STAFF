@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
+import { compressImage } from "@/lib/compressImage";
 
 interface Props {
   imageUrl: string;
@@ -22,9 +23,9 @@ const ProfilePhotoSection = ({ imageUrl, userName, userId, onImageChange }: Prop
       return;
     }
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `${userId}/avatar.${ext}`;
-    const { error } = await supabase.storage.from("staff-photos").upload(path, file, { upsert: true });
+    const compressed = await compressImage(file);
+    const path = `${userId}/avatar.jpg`;
+    const { error } = await supabase.storage.from("staff-photos").upload(path, compressed, { upsert: true, contentType: "image/jpeg" });
     if (error) {
       toast({ title: "Upload failed", description: error.message, variant: "destructive" });
     } else {

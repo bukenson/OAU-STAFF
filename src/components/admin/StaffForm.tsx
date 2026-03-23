@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { compressImage } from "@/lib/compressImage";
 
 const ACADEMIC_RANKS = [
   "Graduate Assistant", "Assistant Lecturer", "Lecturer II", "Lecturer I",
@@ -77,9 +78,9 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
       return;
     }
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("staff-photos").upload(path, file);
+    const compressed = await compressImage(file);
+    const path = `${crypto.randomUUID()}.jpg`;
+    const { error } = await supabase.storage.from("staff-photos").upload(path, compressed, { contentType: "image/jpeg" });
     if (error) {
       toast({ title: "Upload failed", description: error.message, variant: "destructive" });
       setUploading(false);
