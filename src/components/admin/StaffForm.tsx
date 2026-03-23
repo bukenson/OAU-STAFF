@@ -78,9 +78,9 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
       return;
     }
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("staff-photos").upload(path, file);
+    const compressed = await compressImage(file);
+    const path = `${crypto.randomUUID()}.jpg`;
+    const { error } = await supabase.storage.from("staff-photos").upload(path, compressed, { contentType: "image/jpeg" });
     if (error) {
       toast({ title: "Upload failed", description: error.message, variant: "destructive" });
       setUploading(false);
