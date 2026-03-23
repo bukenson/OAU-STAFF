@@ -46,6 +46,14 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Enforce domain restriction server-side
+    if (!userEmail.toLowerCase().endsWith("@oauife.edu.ng")) {
+      return new Response(JSON.stringify({ error: "Only @oauife.edu.ng accounts are allowed." }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Use service role to bypass RLS
     const adminClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
