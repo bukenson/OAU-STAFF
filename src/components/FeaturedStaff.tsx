@@ -50,7 +50,7 @@ const FeaturedStaff = () => {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-6"
+className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
             >
               {recentlyAdded.map((s, i) => (
                 <StaffCard key={s.id || s.name + i} staff={s} index={i} />
