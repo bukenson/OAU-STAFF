@@ -8,6 +8,14 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.querySelector(location.hash);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [location.hash]);
 
   const handleSearch = (query: string, filter: string) => {
     const params = new URLSearchParams();
