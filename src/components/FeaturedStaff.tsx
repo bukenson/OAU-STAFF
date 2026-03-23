@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import StaffCard from "./StaffCard";
 import { useStaff } from "@/hooks/useStaff";
@@ -12,6 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import type { UseEmblaCarouselType } from "embla-carousel-react";
 
 type CarouselApi = UseEmblaCarouselType[1];
@@ -68,6 +69,7 @@ const FeaturedStaff = () => {
           ) : isMobile ? (
             <Carousel
               opts={{ align: "start", loop: true }}
+              plugins={[Autoplay({ delay: 3000, stopOnInteraction: true })]}
               setApi={setApi}
               className="w-full"
             >
