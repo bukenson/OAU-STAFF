@@ -3,13 +3,20 @@ import StaffCard from "./StaffCard";
 import { useStaff } from "@/hooks/useStaff";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const FeaturedStaff = () => {
   const { data: staff, isLoading } = useStaff();
+  const isMobile = useIsMobile();
   const allStaff = staff ?? [];
-  // Recently added: first 8 from the query (already sorted by created_at desc)
   const recentlyAdded = allStaff.slice(0, 4);
-  // Featured: prioritize those with images
   const sorted = [...allStaff].sort((a, b) => {
     const aHas = a.image ? 0 : 1;
     const bHas = b.image ? 0 : 1;
@@ -44,13 +51,30 @@ const FeaturedStaff = () => {
                 </div>
               ))}
             </div>
+          ) : isMobile ? (
+            <Carousel
+              opts={{ align: "start", loop: true }}
+              className="w-full"
+            >
+              <CarouselContent className="-ml-4">
+                {recentlyAdded.map((s, i) => (
+                  <CarouselItem key={s.id || s.name + i} className="pl-4 basis-[85%]">
+                    <StaffCard staff={s} index={i} />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <div className="flex justify-center gap-2 mt-6">
+                <CarouselPrevious className="static translate-y-0" />
+                <CarouselNext className="static translate-y-0" />
+              </div>
+            </Carousel>
           ) : (
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
             >
               {recentlyAdded.map((s, i) => (
                 <StaffCard key={s.id || s.name + i} staff={s} index={i} />
@@ -91,7 +115,7 @@ className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
             >
               {featured.map((s, i) => (
                 <StaffCard key={s.id || s.name + i} staff={s} index={i} />
