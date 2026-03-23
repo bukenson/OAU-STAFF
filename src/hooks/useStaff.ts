@@ -92,13 +92,23 @@ export function useStaffStats() {
     queryKey: ["staff-stats"],
     staleTime: STALE_TIME,
     queryFn: async () => {
-      const { count, error } = await supabase
-        .from("staff_members")
-        .select("*", { count: "exact", head: true });
+      const [totalRes, profRes] = await Promise.all([
+        supabase
+          .from("staff_members")
+          .select("*", { count: "exact", head: true }),
+        supabase
+          .from("staff_members")
+          .select("*", { count: "exact", head: true })
+          .ilike("rank", "%professor%"),
+      ]);
 
-      if (error) throw error;
+      if (totalRes.error) throw totalRes.error;
+      if (profRes.error) throw profRes.error;
 
-      return { totalStaff: count ?? 0 };
+      return {
+        totalStaff: totalRes.count ?? 0,
+        professors: profRes.count ?? 0,
+      };
     },
   });
 }
