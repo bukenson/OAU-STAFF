@@ -8,7 +8,7 @@ const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 async function fetchStaff(): Promise<StaffMember[]> {
   const { data, error } = await supabase
     .from("staff_members")
-    .select("*")
+    .select("id, name, faculty, department, email, rank, image_url, research_interests, office_location, created_at")
     .order("created_at", { ascending: false });
 
   if (error) throw error;
