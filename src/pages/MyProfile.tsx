@@ -73,6 +73,7 @@ const MyProfile = () => {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [saving, setSaving] = useState(false);
   const [redirected, setRedirected] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
 
   const redirectToAuth = useCallback(() => {
     if (!redirected) {
@@ -92,6 +93,8 @@ const MyProfile = () => {
   useEffect(() => {
     if (!user || loadedForUser.current === user.id) return;
     loadedForUser.current = user.id;
+    setLoadingProfile(true);
+    setProfileError(null);
 
     const load = async () => {
       try {
@@ -101,23 +104,31 @@ const MyProfile = () => {
           .eq("user_id", user.id)
           .maybeSingle();
 
-        if (fetchError) throw fetchError;
+        if (fetchError) {
+          console.error("Error fetching profile:", fetchError);
+          setProfileError(fetchError.message);
+          throw fetchError;
+        }
 
         let profileData = data;
 
         if (!profileData && user.email) {
-          const { data: claimResult, error: claimError } = await supabase.functions.invoke("claim-profile");
-          if (!claimError && claimResult?.claimed) {
-            const { data: claimed, error: claimedFetchError } = await supabase
-              .from("staff_members")
-              .select("*")
-              .eq("id", claimResult.id)
-              .single();
-            
-            if (!claimedFetchError && claimed) {
-              profileData = claimed;
-              toast({ title: "Profile found!", description: "Your existing staff profile has been linked to your account." });
+          try {
+            const { data: claimResult, error: claimError } = await supabase.functions.invoke("claim-profile");
+            if (!claimError && claimResult?.claimed) {
+              const { data: claimed, error: claimedFetchError } = await supabase
+                .from("staff_members")
+                .select("*")
+                .eq("id", claimResult.id)
+                .single();
+              
+              if (!claimedFetchError && claimed) {
+                profileData = claimed;
+                toast({ title: "Profile found!", description: "Your existing staff profile has been linked to your account." });
+              }
             }
+          } catch (claimErr) {
+            console.error("Claim function error:", claimErr);
           }
         }
 
@@ -146,10 +157,13 @@ const MyProfile = () => {
         } else {
           setForm({ ...emptyForm, email: user.email ?? "" });
         }
-      } catch {
+      } catch (err) {
+        console.error("Error loading profile:", err);
+        const message = err instanceof Error ? err.message : "Failed to load profile";
+        setProfileError(message);
         toast({
           title: "Error loading profile",
-          description: "Something went wrong while fetching your data. Please try again.",
+          description: message,
           variant: "destructive",
         });
       } finally {
@@ -236,6 +250,29 @@ const MyProfile = () => {
         <Navbar />
         <section className="flex-1 bg-background">
           <ProfileSkeleton />
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (profileError) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <section className="flex-1 flex items-center justify-center bg-background px-4">
+          <div className="text-center max-w-md">
+            <h2 className="text-xl font-bold text-destructive mb-2">Failed to Load Profile</h2>
+            <p className="text-muted-foreground mb-4">{profileError}</p>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={() => window.location.reload()}>
+                Try Again
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/")}>
+                Go Home
+              </Button>
+            </div>
+          </div>
         </section>
         <Footer />
       </div>

@@ -2,15 +2,21 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+// Get environment variables - must start with VITE_ in Vite projects
+const getEnv = (key: string, fallback: string): string => {
+  const value = (import.meta.env[key] as string | undefined) || fallback;
+  if (!value || value === "undefined" || value === "null") {
+    console.error(`Missing or invalid environment variable: ${key}`);
+    return fallback;
+  }
+  return value;
+};
 
-// Validate environment variables at runtime
+const SUPABASE_URL = getEnv('VITE_SUPABASE_URL', '');
+const SUPABASE_PUBLISHABLE_KEY = getEnv('VITE_SUPABASE_PUBLISHABLE_KEY', '');
+
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  console.error("Missing Supabase environment variables:", {
-    hasUrl: !!SUPABASE_URL,
-    hasKey: !!SUPABASE_PUBLISHABLE_KEY
-  });
+  console.error("Supabase configuration error - check environment variables");
 }
 
 export const supabase = createClient<Database>(
@@ -22,12 +28,6 @@ export const supabase = createClient<Database>(
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      flowType: "implicit",
-    },
-    global: {
-      headers: {
-        "X-Client-Info": "oau-staff-finder",
-      },
     },
   }
 );
