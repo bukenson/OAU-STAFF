@@ -12,11 +12,19 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [checking, setChecking] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          setError(sessionError.message);
+          return;
+        }
+        
         if (session?.user) {
           const email = session.user.email?.toLowerCase() ?? "";
           if (email.endsWith("@oauife.edu.ng")) {
@@ -33,6 +41,7 @@ const Auth = () => {
         }
       } catch (err) {
         console.error("Auth check error:", err);
+        setError(err instanceof Error ? err.message : "Authentication failed");
       } finally {
         setChecking(false);
       }
@@ -48,6 +57,24 @@ const Auth = () => {
           <div className="flex flex-col items-center gap-4">
             <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             <p className="text-muted-foreground text-sm">Checking login status…</p>
+          </div>
+        </section>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <section className="flex-1 flex items-center justify-center">
+          <div className="text-center max-w-md px-4">
+            <h2 className="text-xl font-bold text-destructive mb-2">Connection Error</h2>
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <Button onClick={() => window.location.reload()}>
+              Try Again
+            </Button>
           </div>
         </section>
         <Footer />

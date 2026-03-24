@@ -5,21 +5,29 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+// Validate environment variables at runtime
 if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-  throw new Error("Missing Supabase environment variables");
+  console.error("Missing Supabase environment variables:", {
+    hasUrl: !!SUPABASE_URL,
+    hasKey: !!SUPABASE_PUBLISHABLE_KEY
+  });
 }
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: localStorage,
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    flowType: "pkce",
-  },
-  global: {
-    headers: {
-      "X-Client-Info": "oau-staff-finder",
+export const supabase = createClient<Database>(
+  SUPABASE_URL || "https://placeholder.supabase.co",
+  SUPABASE_PUBLISHABLE_KEY || "placeholder-key",
+  {
+    auth: {
+      storage: localStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: "implicit",
     },
-  },
-});
+    global: {
+      headers: {
+        "X-Client-Info": "oau-staff-finder",
+      },
+    },
+  }
+);
