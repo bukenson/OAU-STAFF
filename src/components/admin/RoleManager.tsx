@@ -65,9 +65,10 @@ export default function RoleManager({ currentUserId }: { currentUserId: string }
         toast({ title: "Error", description: data?.error || "Failed to add admin", variant: "destructive" });
         return;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setAdding(false);
-      toast({ title: "Error", description: err.message || "Failed to add admin", variant: "destructive" });
+      const message = err instanceof Error ? err.message : "Failed to add admin";
+      toast({ title: "Error", description: message, variant: "destructive" });
       return;
     }
     toast({ title: "Admin added", description: `${trimmed} is now an admin.` });

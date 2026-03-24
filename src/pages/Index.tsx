@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import StatsSection from "@/components/StatsSection";
@@ -8,14 +7,6 @@ import Footer from "@/components/Footer";
 
 const Index = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (location.hash) {
-      const el = document.querySelector(location.hash);
-      if (el) el.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [location.hash]);
 
   const handleSearch = (query: string, filter: string) => {
     const params = new URLSearchParams();

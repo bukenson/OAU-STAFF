@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { compressImage } from "@/lib/compressImage";
+import { compressImage, validateImageFile } from "@/lib/compressImage";
 
 const ACADEMIC_RANKS = [
   "Graduate Assistant", "Assistant Lecturer", "Lecturer II", "Lecturer I",
@@ -73,23 +73,30 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      toast({ title: "Invalid file", description: "Please upload an image file.", variant: "destructive" });
+    
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      toast({ title: "Invalid file", description: validation.error, variant: "destructive" });
       return;
     }
+    
     setUploading(true);
-    const compressed = await compressImage(file);
-    const path = `${crypto.randomUUID()}.jpg`;
-    const { error } = await supabase.storage.from("staff-photos").upload(path, compressed, { contentType: "image/jpeg" });
-    if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    try {
+      const compressed = await compressImage(file);
+      const path = `${crypto.randomUUID()}.jpg`;
+      const { error } = await supabase.storage.from("staff-photos").upload(path, compressed, { contentType: "image/jpeg" });
+      if (error) {
+        toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+        return;
+      }
+      const { data: urlData } = supabase.storage.from("staff-photos").getPublicUrl(path);
+      set("image_url", urlData.publicUrl);
+      toast({ title: "Photo uploaded" });
+    } catch (err) {
+      toast({ title: "Upload failed", description: err instanceof Error ? err.message : "Unknown error", variant: "destructive" });
+    } finally {
       setUploading(false);
-      return;
     }
-    const { data: urlData } = supabase.storage.from("staff-photos").getPublicUrl(path);
-    set("image_url", urlData.publicUrl);
-    setUploading(false);
-    toast({ title: "Photo uploaded" });
   };
 
   const handleSave = async () => {

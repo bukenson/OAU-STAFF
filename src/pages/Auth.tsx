@@ -1,7 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { lovable } from "@/integrations/lovable/index";
-import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import oauLogo from "@/assets/oaulogo.png";
 import { useToast } from "@/hooks/use-toast";
@@ -10,17 +9,38 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 
 const Auth = () => {
-  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (!loading && user) {
-      navigate("/my-profile");
-    }
-  }, [loading, user, navigate]);
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const email = session.user.email?.toLowerCase() ?? "";
+          if (email.endsWith("@oauife.edu.ng")) {
+            navigate("/my-profile", { replace: true });
+            return;
+          } else {
+            await supabase.auth.signOut();
+            toast({
+              title: "Access Denied",
+              description: "Only @oauife.edu.ng accounts are allowed.",
+              variant: "destructive",
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Auth check error:", err);
+      } finally {
+        setChecking(false);
+      }
+    };
+    checkAuth();
+  }, [navigate, toast]);
 
-  if (loading) {
+  if (checking) {
     return (
       <div className="min-h-screen flex flex-col">
         <Navbar />
@@ -36,18 +56,21 @@ const Auth = () => {
   }
 
   const handleGoogleSignIn = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-      extraParams: {
-        hd: "oauife.edu.ng",
-        prompt: "select_account",
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth`,
+        queryParams: {
+          hd: "oauife.edu.ng",
+          prompt: "select_account",
+        },
       },
     });
 
-    if (result?.error) {
+    if (error) {
       toast({
         title: "Sign in failed",
-        description: result.error.message || "An error occurred",
+        description: error.message || "An error occurred",
         variant: "destructive",
       });
     }

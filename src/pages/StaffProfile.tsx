@@ -1,11 +1,11 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, LogIn, Pencil, ExternalLink, Briefcase, Share2, Check } from "lucide-react";
+import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, Pencil, ExternalLink, Briefcase, Share2, Check } from "lucide-react";
 import { useState } from "react";
 import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useStaffProfile } from "@/hooks/useStaff";
+import { useStaffProfile, type StaffProfileData } from "@/hooks/useStaff";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -86,11 +86,11 @@ const StaffProfile = () => {
                       {staff.rank}
                     </span>
                   )}
-                  {(staff as any).status_availability && (staff as any).status_availability !== "Active" ? (
+                  {staff.status_availability && staff.status_availability !== "Active" ? (
                     <span className="inline-block bg-destructive text-destructive-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                      {(staff as any).status_availability}
+                      {staff.status_availability}
                     </span>
-                  ) : (staff as any).status_availability === "Active" ? (
+                  ) : staff.status_availability === "Active" ? (
                     <span className="inline-block bg-green-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
                       Active
                     </span>
@@ -161,7 +161,7 @@ const StaffProfile = () => {
                 )}
 
                 {/* Specializations */}
-                {(staff as any).specializations && (staff as any).specializations.length > 0 && (
+                {staff.specializations && staff.specializations.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -172,7 +172,7 @@ const StaffProfile = () => {
                       Area(s) of Specialization
                     </h2>
                     <div className="flex flex-wrap gap-2">
-                      {((staff as any).specializations as string[]).map((spec, i) => (
+                      {staff.specializations.map((spec, i) => (
                         <span
                           key={i}
                           className="bg-secondary text-secondary-foreground px-3 py-1.5 rounded-full text-sm font-medium"
@@ -232,7 +232,7 @@ const StaffProfile = () => {
                 )}
 
                 {/* Publication Links */}
-                {(staff as any).publication_link && (staff as any).publication_link.length > 0 && (
+                {staff.publication_link && staff.publication_link.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -243,7 +243,7 @@ const StaffProfile = () => {
                       Publication Links
                     </h2>
                     <ul className="space-y-2">
-                      {((staff as any).publication_link as string[]).map((link, i) => (
+                      {staff.publication_link.map((link, i) => (
                         <li key={i}>
                           <a
                             href={link}
@@ -261,7 +261,7 @@ const StaffProfile = () => {
                 )}
 
                 {/* Conferences */}
-                {(staff as any).conferences && (staff as any).conferences.length > 0 && (
+                {staff.conferences && staff.conferences.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -272,7 +272,7 @@ const StaffProfile = () => {
                       Journal/Workshops/Conferences
                     </h2>
                     <div className="space-y-3">
-                      {((staff as any).conferences as string[]).map((conf, i) => (
+                      {staff.conferences.map((conf, i) => (
                         <div
                           key={i}
                           className="text-muted-foreground text-sm leading-relaxed prose prose-sm max-w-none"

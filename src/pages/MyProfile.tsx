@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { useQueryClient } from "@tanstack/react-query";
@@ -18,6 +18,7 @@ import ArrayFieldSection from "@/components/profile/ArrayFieldSection";
 import ProfileLinksSection from "@/components/profile/ProfileLinksSection";
 import RichTextSection from "@/components/profile/RichTextSection";
 import ChipInput from "@/components/profile/ChipInput";
+import { sanitizeText, sanitizeUrl } from "@/lib/sanitize";
 
 const FACULTIES = [
   "Administration", "Agriculture", "Arts", "Basic Medical Sciences",
@@ -71,10 +72,20 @@ const MyProfile = () => {
   const [existingId, setExistingId] = useState<string | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [redirected, setRedirected] = useState(false);
+
+  const redirectToAuth = useCallback(() => {
+    if (!redirected) {
+      setRedirected(true);
+      navigate("/auth");
+    }
+  }, [navigate, redirected]);
 
   useEffect(() => {
-    if (!authLoading && !user) navigate("/auth");
-  }, [authLoading, user, navigate]);
+    if (!authLoading && !user) {
+      redirectToAuth();
+    }
+  }, [authLoading, user, redirectToAuth]);
 
   const loadedForUser = useRef<string | null>(null);
 
@@ -83,75 +94,93 @@ const MyProfile = () => {
     loadedForUser.current = user.id;
 
     const load = async () => {
-      let { data } = await supabase
-        .from("staff_members")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      try {
+        const { data, error: fetchError } = await supabase
+          .from("staff_members")
+          .select("*")
+          .eq("user_id", user.id)
+          .maybeSingle();
 
-      if (!data && user.email) {
-        const { data: claimResult, error: claimError } = await supabase.functions.invoke("claim-profile");
-        if (!claimError && claimResult?.claimed) {
-          const { data: claimed } = await supabase
-            .from("staff_members")
-            .select("*")
-            .eq("id", claimResult.id)
-            .single();
-          if (claimed) {
-            data = claimed;
-            toast({ title: "Profile found!", description: "Your existing staff profile has been linked to your account." });
+        if (fetchError) throw fetchError;
+
+        let profileData = data;
+
+        if (!profileData && user.email) {
+          const { data: claimResult, error: claimError } = await supabase.functions.invoke("claim-profile");
+          if (!claimError && claimResult?.claimed) {
+            const { data: claimed, error: claimedFetchError } = await supabase
+              .from("staff_members")
+              .select("*")
+              .eq("id", claimResult.id)
+              .single();
+            
+            if (!claimedFetchError && claimed) {
+              profileData = claimed;
+              toast({ title: "Profile found!", description: "Your existing staff profile has been linked to your account." });
+            }
           }
         }
-      }
 
-      if (data) {
-        setExistingId(data.id);
-        const isAcademic = ACADEMIC_RANKS.includes(data.rank ?? "");
-        setForm({
-          name: data.name,
-          email: data.email ?? user.email ?? "",
-          phone: data.phone ?? "",
-          faculty: data.faculty,
-          department: data.department,
-          status_availability: (data as any).status_availability ?? "Active",
-          staff_category: isAcademic ? "academic" : (data.rank ? "non-academic" : "academic"),
-          rank: data.rank ?? "",
-          qualifications: data.qualifications ?? [],
-          specializations: (data as any).specializations ?? [],
-          publication_link: data.publication_link ?? [],
-          research_interests: data.research_interests ?? [],
-          office_location: data.office_location ?? "",
-          bio: data.bio ?? "",
-          publications: data.publications ?? [],
-          conferences: (data as any).conferences ?? [],
-          image_url: data.image_url ?? "",
+        if (profileData) {
+          setExistingId(profileData.id);
+          const isAcademic = ACADEMIC_RANKS.includes(profileData.rank ?? "");
+          setForm({
+            name: profileData.name || "",
+            email: profileData.email ?? user.email ?? "",
+            phone: profileData.phone ?? "",
+            faculty: profileData.faculty || "",
+            department: profileData.department || "",
+            status_availability: profileData.status_availability ?? "Active",
+            staff_category: isAcademic ? "academic" : (profileData.rank ? "non-academic" : "academic"),
+            rank: profileData.rank ?? "",
+            qualifications: profileData.qualifications ?? [],
+            specializations: profileData.specializations ?? [],
+            publication_link: profileData.publication_link ?? [],
+            research_interests: profileData.research_interests ?? [],
+            office_location: profileData.office_location ?? "",
+            bio: profileData.bio ?? "",
+            publications: profileData.publications ?? [],
+            conferences: profileData.conferences ?? [],
+            image_url: profileData.image_url ?? "",
+          });
+        } else {
+          setForm({ ...emptyForm, email: user.email ?? "" });
+        }
+      } catch {
+        toast({
+          title: "Error loading profile",
+          description: "Something went wrong while fetching your data. Please try again.",
+          variant: "destructive",
         });
-      } else {
-        setForm({ ...emptyForm, email: user.email ?? "" });
+      } finally {
+        setLoadingProfile(false);
       }
-      setLoadingProfile(false);
     };
     load();
-  }, [user]);
+  }, [user, toast]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     setSaving(true);
 
+    const sanitizedLinks = form.publication_link
+      .map(link => sanitizeUrl(link.trim()))
+      .filter(Boolean);
+
     const payload = {
       user_id: user.id,
-      name: form.name.trim(),
+      name: sanitizeText(form.name.trim()),
       email: form.email.trim() || null,
       phone: form.phone.trim() || null,
       faculty: form.faculty,
-      department: form.department.trim(),
+      department: sanitizeText(form.department.trim()),
       status_availability: form.status_availability || "Active",
       rank: form.rank || null,
-      qualifications: form.qualifications.length ? form.qualifications : null,
-      specializations: form.specializations.length ? form.specializations : null,
-      publication_link: form.publication_link.length ? form.publication_link : null,
-      research_interests: form.research_interests.length ? form.research_interests : null,
+      qualifications: form.qualifications.length ? form.qualifications.map(q => sanitizeText(q.trim())) : null,
+      specializations: form.specializations.length ? form.specializations.map(s => sanitizeText(s.trim())) : null,
+      publication_link: sanitizedLinks.length ? sanitizedLinks : null,
+      research_interests: form.research_interests.length ? form.research_interests.map(r => sanitizeText(r.trim())) : null,
       office_location: form.office_location.trim() || null,
       bio: form.bio.trim() || null,
       publications: form.publications.length ? form.publications : null,
@@ -183,8 +212,8 @@ const MyProfile = () => {
       }
       queryClient.invalidateQueries({ queryKey: ["staff-stats"] });
       queryClient.invalidateQueries({ queryKey: ["staff"] });
-      // Redirect to home page Recently Added section
-      setTimeout(() => navigate("/#recently-added"), 1200);
+      // Redirect to home page
+      setTimeout(() => navigate("/"), 1200);
     }
     setSaving(false);
   };
@@ -222,10 +251,10 @@ const MyProfile = () => {
             {/* Header */}
             <div className="bg-primary text-primary-foreground text-center py-4 rounded-t-xl mb-0">
               <h1 className="font-display text-xl font-bold">
-                {existingId ? "Welcome back!" : "Create Your Profile"}
+                {existingId ? "Edit Your Staff Profile" : "Create Your Staff Profile"}
               </h1>
               <p className="text-primary-foreground/80 text-sm mt-1">
-                {existingId ? "Update your staff profile details below" : "Fill in your details to set up your staff profile"}
+                {existingId ? "Keep your profile information up to date" : "Fill in your details to set up your staff profile"}
               </p>
             </div>
 
@@ -337,7 +366,7 @@ const MyProfile = () => {
               {/* Submit */}
               <Button type="submit" size="lg" className="w-full" disabled={saving}>
                 <Save size={18} />
-                {saving ? "Saving…" : "Submit"}
+                {saving ? "Saving..." : (existingId ? "Save Changes" : "Create Profile")}
               </Button>
             </form>
           </motion.div>

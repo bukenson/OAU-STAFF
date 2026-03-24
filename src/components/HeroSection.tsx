@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import heroImage from "@/assets/oau-campus-hero.jpg";
@@ -7,7 +7,6 @@ const WORDS = ["Staff Directory", "Faculty Finder", "Department Search", "Academ
 const TYPING_SPEED = 120;
 const DELETE_SPEED = 60;
 const PAUSE_AFTER_TYPE = 2000;
-const PAUSE_AFTER_DELETE = 500;
 
 const useTypingEffect = (words: string[]) => {
   const [display, setDisplay] = useState("");
@@ -52,23 +51,34 @@ interface HeroSectionProps {
 const HeroSection = ({ onSearch }: HeroSectionProps) => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
   const { display: typedText, opacity: textOpacity } = useTypingEffect(WORDS);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = heroImage;
+    img.onload = () => setImageLoaded(true);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(query, filter);
   };
 
-    const { scrollY } = useScroll();
-    const bgY = useTransform(scrollY, [0, 600], [0, 150]);
-    const overlayOpacity = useTransform(scrollY, [0, 400], [0.85, 1]);
+  const { scrollY } = useScroll();
+  const bgY = useTransform(scrollY, [0, 600], [0, 150]);
+  const overlayOpacity = useTransform(scrollY, [0, 400], [0.85, 1]);
 
-    return (
+  return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-      <motion.div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+      <div 
+        className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
         style={{ backgroundImage: `url(${heroImage})`, backgroundPosition: "center 40%", y: bgY }}
       />
+      {!imageLoaded && (
+        <div className="absolute inset-0 bg-primary animate-pulse" />
+      )}
       <motion.div
         className="absolute inset-0 bg-gradient-to-b from-primary/85 via-primary/70 to-primary/95"
         style={{ opacity: overlayOpacity }}

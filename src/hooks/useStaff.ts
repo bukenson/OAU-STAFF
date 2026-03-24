@@ -113,8 +113,30 @@ export function useStaffStats() {
   });
 }
 
+export interface StaffProfileData {
+  id: string;
+  name: string;
+  faculty: string;
+  department: string;
+  email: string | null;
+  rank: string | null;
+  image_url: string | null;
+  research_interests: string[] | null;
+  office_location: string | null;
+  bio: string | null;
+  qualifications: string[] | null;
+  publications: string[] | null;
+  specializations: string[] | null;
+  conferences: string[] | null;
+  publication_link: string[] | null;
+  status_availability: string | null;
+  user_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export function useStaffProfile(id: string | undefined) {
-  return useQuery({
+  return useQuery<StaffProfileData | null>({
     queryKey: ["staff-profile", id],
     staleTime: STALE_TIME,
     queryFn: async () => {
@@ -126,7 +148,7 @@ export function useStaffProfile(id: string | undefined) {
         .maybeSingle();
 
       if (error) throw error;
-      return data;
+      return data as StaffProfileData | null;
     },
     enabled: !!id,
   });

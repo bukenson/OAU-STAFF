@@ -2,7 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
-import { compressImage } from "@/lib/compressImage";
+import { compressImage, validateImageFile } from "@/lib/compressImage";
 
 interface Props {
   imageUrl: string;
@@ -13,27 +13,43 @@ interface Props {
 
 const ProfilePhotoSection = ({ imageUrl, userName, userId, onImageChange }: Props) => {
   const [uploading, setUploading] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const { toast } = useToast();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !userId) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: "File too large", description: "Max 5MB", variant: "destructive" });
+    
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      toast({ title: "Invalid file", description: validation.error, variant: "destructive" });
       return;
     }
+    
     setUploading(true);
-    const compressed = await compressImage(file);
-    const path = `${userId}/avatar.jpg`;
-    const { error } = await supabase.storage.from("staff-photos").upload(path, compressed, { upsert: true, contentType: "image/jpeg" });
-    if (error) {
-      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
-    } else {
-      const { data: urlData } = supabase.storage.from("staff-photos").getPublicUrl(path);
-      onImageChange(urlData.publicUrl + "?t=" + Date.now());
-      toast({ title: "Photo uploaded!" });
+    setImgLoaded(false);
+    try {
+      const compressed = await compressImage(file);
+      const path = `${userId}/avatar.jpg`;
+      const { error } = await supabase.storage.from("staff-photos").upload(path, compressed, { upsert: true, contentType: "image/jpeg" });
+      if (error) {
+        toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      } else {
+        const { data: urlData } = supabase.storage.from("staff-photos").getPublicUrl(path);
+        onImageChange(urlData.publicUrl + "?t=" + Date.now());
+        toast({ title: "Photo uploaded!" });
+        setImgLoaded(true);
+      }
+    } catch (err) {
+      toast({ title: "Upload failed", description: err instanceof Error ? err.message : "Unknown error", variant: "destructive" });
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
+  };
+
+  const handleRemove = () => {
+    onImageChange("");
+    setImgLoaded(false);
   };
 
   return (
@@ -41,8 +57,19 @@ const ProfilePhotoSection = ({ imageUrl, userName, userId, onImageChange }: Prop
       <label className="text-sm font-semibold text-primary">Your Photo:</label>
       <div className="flex items-center gap-4">
         {imageUrl ? (
-          <div className="w-20 h-24 rounded-lg overflow-hidden border border-border shrink-0">
-            <img src={imageUrl} alt="Preview" className="w-full h-full object-cover object-top" />
+          <div className="w-20 h-24 rounded-lg overflow-hidden border border-border shrink-0 bg-muted">
+            {!imgLoaded && (
+              <div className="w-full h-full flex items-center justify-center animate-pulse">
+                <span className="font-display text-2xl font-bold text-muted-foreground">{userName?.charAt(0) || "?"}</span>
+              </div>
+            )}
+            <img 
+              src={imageUrl} 
+              alt="Preview" 
+              className={`w-full h-full object-cover object-top transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0 absolute'}`}
+              onLoad={() => setImgLoaded(true)}
+              loading="lazy"
+            />
           </div>
         ) : (
           <div className="w-20 h-24 rounded-lg border border-border bg-muted flex items-center justify-center shrink-0">
@@ -56,7 +83,7 @@ const ProfilePhotoSection = ({ imageUrl, userName, userId, onImageChange }: Prop
             <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={uploading} onChange={handleUpload} />
           </label>
           {imageUrl && (
-            <button type="button" onClick={() => onImageChange("")} className="text-xs text-destructive hover:text-destructive/80 text-left">
+            <button type="button" onClick={handleRemove} className="text-xs text-destructive hover:text-destructive/80 text-left">
               Remove photo
             </button>
           )}

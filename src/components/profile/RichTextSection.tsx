@@ -3,6 +3,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import { Bold, Italic, Underline as UnderlineIcon, List, ListOrdered, RemoveFormatting } from "lucide-react";
 import { useEffect } from "react";
+import { sanitizeHTML } from "@/lib/sanitize";
 
 interface Props {
   label: string;
@@ -25,22 +26,36 @@ const MenuButton = ({ active, onClick, children, title }: { active?: boolean; on
 const RichTextSection = ({ label, value, onChange, placeholder }: Props) => {
   const editor = useEditor({
     extensions: [StarterKit, Underline],
-    content: value || "",
+    content: sanitizeHTML(value) || "",
     editorProps: {
       attributes: {
         class: "min-h-[150px] px-3 py-2 text-sm focus:outline-none prose prose-sm max-w-none",
       },
+      handleDOMEvents: {
+        blur: (editor) => {
+          const html = editor.getHTML();
+          const sanitized = sanitizeHTML(html);
+          if (html !== sanitized) {
+            editor.commands.setContent(sanitized);
+          }
+          onChange(sanitized);
+          return true;
+        },
+      },
     },
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+      onChange(sanitizeHTML(editor.getHTML()));
     },
   });
 
   useEffect(() => {
-    if (editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value || "");
+    if (editor) {
+      const sanitized = sanitizeHTML(value);
+      if (value !== editor.getHTML()) {
+        editor.commands.setContent(sanitized || "");
+      }
     }
-  }, [value]);
+  }, [value, editor]);
 
   if (!editor) return null;
 
@@ -48,7 +63,6 @@ const RichTextSection = ({ label, value, onChange, placeholder }: Props) => {
     <div className="space-y-2">
       <label className="text-sm font-semibold text-primary">{label}</label>
       <div className="border border-input rounded-md overflow-hidden bg-background">
-        {/* Toolbar */}
         <div className="flex items-center gap-0.5 px-2 py-1.5 border-b border-input bg-muted/50 flex-wrap">
           <MenuButton active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()} title="Bold">
             <Bold size={16} />
