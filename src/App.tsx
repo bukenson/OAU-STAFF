@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import AuthCallbackHandler from "@/components/AuthCallbackHandler";
 
 const Index = lazy(() => import("./pages/Index"));
 const StaffList = lazy(() => import("./pages/StaffList"));
@@ -38,6 +39,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <AuthCallbackHandler />
           <ScrollToTop />
           <Suspense fallback={<PageLoader />}>
             <Routes>

@@ -86,7 +86,7 @@ const Auth = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth`,
+        redirectTo: `${window.location.origin}/`,
         queryParams: {
           hd: "oauife.edu.ng",
           prompt: "select_account",
