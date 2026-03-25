@@ -49,6 +49,8 @@ const App = () => (
               <Route path="/staff/:slug" element={<StaffProfile />} />
               <Route path="/staff/:surname/:firstname/:middlename/:id" element={<StaffProfile />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/create-profile" element={<MyProfile />} />
+              <Route path="/edit-profile" element={<MyProfile />} />
               <Route path="/my-profile" element={<MyProfile />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="*" element={<NotFound />} />

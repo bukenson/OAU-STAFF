@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
+import { getProfileDestination } from "@/lib/profileRedirect";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -28,7 +29,8 @@ const Auth = () => {
         if (session?.user) {
           const email = session.user.email?.toLowerCase() ?? "";
           if (email.endsWith("@oauife.edu.ng")) {
-            navigate("/my-profile", { replace: true });
+            const destination = await getProfileDestination(session.user);
+            navigate(destination, { replace: true });
             return;
           } else {
             await supabase.auth.signOut();

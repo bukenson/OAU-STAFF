@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { getProfileDestination } from "@/lib/profileRedirect";
 
 const ALLOWED_DOMAIN = "@oauife.edu.ng";
 
@@ -48,8 +49,9 @@ const AuthCallbackHandler = () => {
       const email = data.session?.user.email?.toLowerCase() ?? "";
 
       if (data.session?.user && email.endsWith(ALLOWED_DOMAIN)) {
+        const destination = await getProfileDestination(data.session.user);
         clearHash();
-        navigate("/my-profile", { replace: true });
+        navigate(destination, { replace: true });
         return;
       }
 

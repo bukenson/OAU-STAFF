@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import confetti from "canvas-confetti";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +25,7 @@ import {
   sanitizeUrl,
 } from "@/lib/sanitize";
 import { getStaffProfilePath } from "@/lib/staffProfileUrl";
+import { getProfileDestination } from "@/lib/profileRedirect";
 
 const FACULTIES = [
   "Administration", "Agriculture", "Arts", "Basic Medical Sciences",
@@ -72,6 +73,7 @@ const emptyForm: ProfileForm = {
 const MyProfile = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [form, setForm] = useState<ProfileForm>(emptyForm);
@@ -178,6 +180,21 @@ const MyProfile = () => {
     };
     load();
   }, [user, toast]);
+
+  useEffect(() => {
+    if (!user || loadingProfile || profileError) return;
+
+    const syncRouteWithProfile = async () => {
+      const destination = await getProfileDestination(user);
+      const profileRoutes = ["/create-profile", "/edit-profile", "/my-profile"];
+
+      if (profileRoutes.includes(location.pathname) && location.pathname !== destination) {
+        navigate(destination, { replace: true });
+      }
+    };
+
+    syncRouteWithProfile();
+  }, [user, loadingProfile, profileError, location.pathname, navigate]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
