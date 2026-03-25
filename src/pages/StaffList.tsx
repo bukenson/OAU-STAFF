@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, Filter, X, ChevronLeft, ChevronRight, Users } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Search, X, ChevronLeft, ChevronRight, Users, Loader2 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StaffCard from "@/components/StaffCard";
@@ -26,9 +25,6 @@ const StaffList = () => {
   );
   const [rankFilter, setRankFilter] = useState("");
   const [page, setPage] = useState(1);
-  const [showFilters, setShowFilters] = useState(
-    !!searchParams.get("faculty") || initialFilter === "faculty" || initialFilter === "department"
-  );
 
   const { data: allStaff = [], isLoading } = useStaff();
   const { data: faculties = [] } = useFaculties();
@@ -94,79 +90,70 @@ const StaffList = () => {
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 placeholder="Search by name, department, or faculty..."
-                className="w-full bg-white border border-primary-foreground/20 text-foreground placeholder:text-muted-foreground rounded-lg pl-11 pr-4 py-3 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-full bg-white border border-primary-foreground/20 text-foreground placeholder:text-muted-foreground rounded-lg pl-11 pr-11 py-3 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
               />
-            </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center gap-2 bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground rounded-lg px-5 py-3 text-sm font-medium hover:bg-primary-foreground/20 transition-colors"
-            >
-              <Filter size={16} />
-              Filters
-              {activeFilterCount > 0 && (
-                <span className="bg-accent text-accent-foreground text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
-                  {activeFilterCount}
-                </span>
+              {isLoading ? (
+                <Loader2
+                  size={16}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-muted-foreground"
+                />
+              ) : search && (
+                <button
+                  type="button"
+                  onClick={() => { setSearch(""); setPage(1); }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X size={16} />
+                </button>
               )}
-            </button>
+            </div>
           </div>
 
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 max-w-2xl">
-                  <select
-                    value={facultyFilter}
-                    onChange={(e) => { setFacultyFilter(e.target.value); setPage(1); }}
-                    className="bg-white border border-primary-foreground/20 text-foreground rounded-lg px-4 py-2.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
-                  >
-                    <option value="" className="text-foreground">All Faculties</option>
-                    {faculties.map((f) => (
-                      <option key={f} value={f} className="text-foreground">{f}</option>
-                    ))}
-                  </select>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 max-w-2xl">
+            <select
+              value={facultyFilter}
+              onChange={(e) => { setFacultyFilter(e.target.value); setPage(1); }}
+              className="bg-white border border-primary-foreground/20 text-foreground rounded-lg px-4 py-2.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
+            >
+              <option value="" className="text-foreground">All Faculties</option>
+              {faculties.map((f) => (
+                <option key={f} value={f} className="text-foreground">{f}</option>
+              ))}
+            </select>
 
-                  <select
-                    value={departmentFilter}
-                    onChange={(e) => { setDepartmentFilter(e.target.value); setPage(1); }}
-                    className="bg-white border border-primary-foreground/20 text-foreground rounded-lg px-4 py-2.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
-                  >
-                    <option value="" className="text-foreground">All Departments</option>
-                    {departments.map((d) => (
-                      <option key={d} value={d} className="text-foreground">{d}</option>
-                    ))}
-                  </select>
+            <select
+              value={departmentFilter}
+              onChange={(e) => { setDepartmentFilter(e.target.value); setPage(1); }}
+              className="bg-white border border-primary-foreground/20 text-foreground rounded-lg px-4 py-2.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
+            >
+              <option value="" className="text-foreground">All Departments</option>
+              {departments.map((d) => (
+                <option key={d} value={d} className="text-foreground">{d}</option>
+              ))}
+            </select>
 
-                  <select
-                    value={rankFilter}
-                    onChange={(e) => { setRankFilter(e.target.value); setPage(1); }}
-                    className="bg-white border border-primary-foreground/20 text-foreground rounded-lg px-4 py-2.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
-                  >
-                    <option value="" className="text-foreground">All Ranks</option>
-                    {ranks.map((r) => (
-                      <option key={r} value={r} className="text-foreground">{r}</option>
-                    ))}
-                  </select>
-                </div>
+            <select
+              value={rankFilter}
+              onChange={(e) => { setRankFilter(e.target.value); setPage(1); }}
+              className="bg-white border border-primary-foreground/20 text-foreground rounded-lg px-4 py-2.5 text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent"
+            >
+              <option value="" className="text-foreground">All Ranks</option>
+              {ranks.map((r) => (
+                <option key={r} value={r} className="text-foreground">{r}</option>
+              ))}
+            </select>
+          </div>
 
-                {activeFilterCount > 0 && (
-                  <button
-                    onClick={clearFilters}
-                    className="mt-3 flex items-center gap-1.5 text-accent hover:text-accent/80 text-sm transition-colors"
-                  >
-                    <X size={14} />
-                    Clear all filters
-                  </button>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {activeFilterCount > 0 && (
+            <button
+              onClick={clearFilters}
+              className="mt-3 flex items-center gap-1.5 text-accent hover:text-accent/80 text-sm transition-colors"
+            >
+              <X size={14} />
+              Clear all filters
+            </button>
+          )}
         </div>
       </section>
 

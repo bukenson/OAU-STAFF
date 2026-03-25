@@ -1,26 +1,78 @@
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Mail, MapPin, GraduationCap, BookOpen, FlaskConical, Pencil, ExternalLink, Briefcase, Share2, Check } from "lucide-react";
-import { useState } from "react";
-import DOMPurify from "dompurify";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useStaffProfile, type StaffProfileData } from "@/hooks/useStaff";
+import { useStaffProfile, useStaffProfileBySlug } from "@/hooks/useStaff";
 import { useAuth } from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { getStaffIdFromProfileSlug, getStaffProfilePath } from "@/lib/staffProfileUrl";
+import { sanitizeEmailAddress, sanitizeHTML, sanitizeImageUrl, sanitizeUrl } from "@/lib/sanitize";
+
+function copyText(value: string) {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(value);
+  }
+
+  const textArea = document.createElement("textarea");
+  textArea.value = value;
+  textArea.setAttribute("readonly", "");
+  textArea.style.position = "absolute";
+  textArea.style.left = "-9999px";
+  document.body.appendChild(textArea);
+  textArea.select();
+
+  const copied = document.execCommand("copy");
+  document.body.removeChild(textArea);
+
+  return copied
+    ? Promise.resolve()
+    : Promise.reject(new Error("Copy failed"));
+}
 
 const StaffProfile = () => {
-  const { id } = useParams<{ id: string }>();
-  const { data: staff, isLoading, error } = useStaffProfile(id);
+  const { id, slug, surname, firstname, middlename } = useParams<{
+    id?: string;
+    slug?: string;
+    surname?: string;
+    firstname?: string;
+    middlename?: string;
+  }>();
+  const legacyId = id ?? getStaffIdFromProfileSlug(slug) ?? undefined;
+  const profileById = useStaffProfile(legacyId);
+  const profileBySlug = useStaffProfileBySlug(surname, firstname, middlename, !legacyId);
+  const staff = legacyId ? profileById.data : profileBySlug.data;
+  const isLoading = legacyId ? profileById.isLoading : profileBySlug.isLoading;
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [copied, setCopied] = useState(false);
+
+  const handleShareProfile = async () => {
+    try {
+      await copyText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (copyError) {
+      console.error("Failed to copy profile URL:", copyError);
+    }
+  };
+
+  useEffect(() => {
+    if (!staff) return;
+    const canonicalPath = getStaffProfilePath({ id: staff.id, name: staff.name });
+    if (location.pathname !== canonicalPath) {
+      navigate(canonicalPath, { replace: true });
+    }
+  }, [staff, location.pathname, navigate]);
 
   // Determine if the logged-in user owns this profile
   const isOwner = user && staff?.user_id === user.id;
-  // Show claim button if: profile has no user_id, user is not logged in or logged in but doesn't own it
-  const canClaim = staff && !staff.user_id && !isOwner;
+  const safeImageUrl = sanitizeImageUrl(staff?.image_url ?? "");
+  const safeEmail = sanitizeEmailAddress(staff?.email ?? "");
+  const safePublicationLinks = (staff?.publication_link ?? []).map(sanitizeUrl).filter(Boolean);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -61,9 +113,9 @@ const StaffProfile = () => {
               className="flex flex-col sm:flex-row gap-8"
             >
               <div className="w-44 h-56 rounded-xl overflow-hidden shrink-0 border-2 border-accent/30 bg-muted">
-                {staff.image_url ? (
+                {safeImageUrl ? (
                   <img
-                    src={staff.image_url}
+                    src={safeImageUrl}
                     alt={staff.name}
                     className="w-full h-full object-cover object-top"
                   />
@@ -109,11 +161,7 @@ const StaffProfile = () => {
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => {
-                      navigator.clipboard.writeText(window.location.href);
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
+                    onClick={handleShareProfile}
                   >
                     {copied ? <Check size={14} /> : <Share2 size={14} />}
                     {copied ? "Link Copied!" : "Share Profile"}
@@ -155,7 +203,7 @@ const StaffProfile = () => {
                     </h2>
                     <div
                       className="text-muted-foreground leading-relaxed prose prose-sm max-w-none"
-                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(staff.bio) }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeHTML(staff.bio) }}
                     />
                   </motion.div>
                 )}
@@ -224,7 +272,7 @@ const StaffProfile = () => {
                         <div
                           key={i}
                           className="text-muted-foreground text-sm leading-relaxed prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(pub) }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHTML(pub) }}
                         />
                       ))}
                     </div>
@@ -232,7 +280,7 @@ const StaffProfile = () => {
                 )}
 
                 {/* Publication Links */}
-                {staff.publication_link && staff.publication_link.length > 0 && (
+                {safePublicationLinks.length > 0 && (
                   <motion.div
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -243,7 +291,7 @@ const StaffProfile = () => {
                       Publication Links
                     </h2>
                     <ul className="space-y-2">
-                      {staff.publication_link.map((link, i) => (
+                      {safePublicationLinks.map((link, i) => (
                         <li key={i}>
                           <a
                             href={link}
@@ -276,7 +324,7 @@ const StaffProfile = () => {
                         <div
                           key={i}
                           className="text-muted-foreground text-sm leading-relaxed prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(conf) }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHTML(conf) }}
                         />
                       ))}
                     </div>
@@ -305,13 +353,13 @@ const StaffProfile = () => {
                     Contact Information
                   </h3>
                   <div className="space-y-3">
-                    {staff.email ? (
+                    {safeEmail ? (
                       <a
-                        href={`mailto:${staff.email}`}
+                        href={`mailto:${safeEmail}`}
                         className="flex items-center gap-3 text-sm text-muted-foreground hover:text-primary transition-colors"
                       >
                         <Mail size={16} className="text-accent shrink-0" />
-                        <span className="truncate">{staff.email}</span>
+                        <span className="truncate">{safeEmail}</span>
                       </a>
                     ) : (
                       <p className="flex items-center gap-3 text-sm text-muted-foreground/50">

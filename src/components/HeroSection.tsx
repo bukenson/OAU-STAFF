@@ -2,11 +2,14 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import heroImage from "@/assets/oau-campus-hero.jpg";
+import heroNightImage from "@/assets/oau-campus-hero-night.jpg";
 
 const WORDS = ["Staff Directory", "Faculty Finder", "Department Search", "Academic Lookup"];
 const TYPING_SPEED = 120;
 const DELETE_SPEED = 60;
 const PAUSE_AFTER_TYPE = 2000;
+const HERO_SLIDES = [heroImage, heroNightImage];
+const SLIDE_INTERVAL = 6000;
 
 const useTypingEffect = (words: string[]) => {
   const [display, setDisplay] = useState("");
@@ -52,13 +55,31 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("all");
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
   const imgRef = useRef<HTMLImageElement>(null);
   const { display: typedText, opacity: textOpacity } = useTypingEffect(WORDS);
 
   useEffect(() => {
-    const img = new Image();
-    img.src = heroImage;
-    img.onload = () => setImageLoaded(true);
+    let loadedCount = 0;
+
+    HERO_SLIDES.forEach((slide) => {
+      const img = new Image();
+      img.src = slide;
+      img.onload = () => {
+        loadedCount += 1;
+        if (loadedCount === HERO_SLIDES.length) {
+          setImageLoaded(true);
+        }
+      };
+    });
+  }, []);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % HERO_SLIDES.length);
+    }, SLIDE_INTERVAL);
+
+    return () => window.clearInterval(intervalId);
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -72,10 +93,20 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
 
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-      <div 
-        className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-        style={{ backgroundImage: `url(${heroImage})`, backgroundPosition: "center 40%", y: bgY }}
-      />
+      {HERO_SLIDES.map((slide, index) => (
+        <motion.div
+          key={slide}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ${
+            imageLoaded ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            backgroundImage: `url(${slide})`,
+            backgroundPosition: "center 40%",
+            y: bgY,
+            opacity: activeSlide === index ? 1 : 0,
+          }}
+        />
+      ))}
       {!imageLoaded && (
         <div className="absolute inset-0 bg-primary animate-pulse" />
       )}
@@ -147,6 +178,22 @@ const HeroSection = ({ onSearch }: HeroSectionProps) => {
       >
         <ChevronDown size={28} className="text-primary-foreground/50" />
       </motion.div>
+
+      <div className="absolute bottom-20 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
+        {HERO_SLIDES.map((slide, index) => (
+          <button
+            key={slide}
+            type="button"
+            onClick={() => setActiveSlide(index)}
+            className={`h-2.5 rounded-full transition-all duration-300 ${
+              activeSlide === index
+                ? "w-8 bg-accent"
+                : "w-2.5 bg-primary-foreground/45 hover:bg-primary-foreground/70"
+            }`}
+            aria-label={`Show hero slide ${index + 1}`}
+          />
+        ))}
+      </div>
     </section>
   );
 };

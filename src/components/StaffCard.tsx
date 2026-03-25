@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Mail } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getStaffProfilePath } from "@/lib/staffProfileUrl";
+import { sanitizeImageUrl } from "@/lib/sanitize";
 
 export interface StaffMember {
   id?: string;
@@ -21,13 +23,14 @@ interface StaffCardProps {
 
 const StaffCard = React.memo(({ staff }: StaffCardProps) => {
   const [imgError, setImgError] = useState(false);
+  const safeImage = sanitizeImageUrl(staff.image ?? "");
 
   const card = (
     <div className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full flex flex-col">
       <div className="relative aspect-[3/4] bg-muted overflow-hidden">
-        {staff.image && !imgError ? (
+        {safeImage && !imgError ? (
           <img
-            src={staff.image}
+            src={safeImage}
             alt={staff.name}
             className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
@@ -70,7 +73,7 @@ const StaffCard = React.memo(({ staff }: StaffCardProps) => {
 
   if (staff.id) {
     return (
-      <Link to={`/staff/${staff.id}`} className="block">
+      <Link to={getStaffProfilePath(staff)} className="block">
         {card}
       </Link>
     );

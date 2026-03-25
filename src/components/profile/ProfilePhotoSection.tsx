@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
 import { compressImage, validateImageFile } from "@/lib/compressImage";
+import { sanitizeImageUrl } from "@/lib/sanitize";
 
 interface Props {
   imageUrl: string;
@@ -15,6 +16,7 @@ const ProfilePhotoSection = ({ imageUrl, userName, userId, onImageChange }: Prop
   const [uploading, setUploading] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const { toast } = useToast();
+  const safeImageUrl = sanitizeImageUrl(imageUrl);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,7 +58,7 @@ const ProfilePhotoSection = ({ imageUrl, userName, userId, onImageChange }: Prop
     <div className="space-y-2">
       <label className="text-sm font-semibold text-primary">Your Photo:</label>
       <div className="flex items-center gap-4">
-        {imageUrl ? (
+        {safeImageUrl ? (
           <div className="w-20 h-24 rounded-lg overflow-hidden border border-border shrink-0 bg-muted">
             {!imgLoaded && (
               <div className="w-full h-full flex items-center justify-center animate-pulse">
@@ -64,7 +66,7 @@ const ProfilePhotoSection = ({ imageUrl, userName, userId, onImageChange }: Prop
               </div>
             )}
             <img 
-              src={imageUrl} 
+              src={safeImageUrl} 
               alt="Preview" 
               className={`w-full h-full object-cover object-top transition-opacity duration-300 ${imgLoaded ? 'opacity-100' : 'opacity-0 absolute'}`}
               onLoad={() => setImgLoaded(true)}
@@ -82,7 +84,7 @@ const ProfilePhotoSection = ({ imageUrl, userName, userId, onImageChange }: Prop
             {uploading ? "Uploading…" : "Choose File"}
             <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={uploading} onChange={handleUpload} />
           </label>
-          {imageUrl && (
+          {safeImageUrl && (
             <button type="button" onClick={handleRemove} className="text-xs text-destructive hover:text-destructive/80 text-left">
               Remove photo
             </button>

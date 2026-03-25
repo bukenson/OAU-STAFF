@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { X } from "lucide-react";
+import { sanitizeUrl } from "@/lib/sanitize";
 
 const LINK_TYPES = ["Google Scholar", "ResearchGate", "ORCID", "Academia.edu", "LinkedIn", "Other"];
 
@@ -17,8 +18,9 @@ const ProfileLinksSection = ({ links, onAdd, onRemove }: Props) => {
   const [linkUrl, setLinkUrl] = useState("");
 
   const handleAdd = () => {
-    if (linkUrl.trim()) {
-      onAdd(linkUrl.trim());
+    const sanitized = sanitizeUrl(linkUrl);
+    if (sanitized) {
+      onAdd(sanitized);
       setLinkUrl("");
     }
   };

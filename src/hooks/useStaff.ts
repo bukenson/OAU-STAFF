@@ -2,8 +2,11 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { StaffMember } from "@/components/StaffCard";
+import { getStaffProfileSlug } from "@/lib/staffProfileUrl";
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
+const PROFILE_SELECT_FIELDS =
+  "id, name, faculty, department, email, rank, image_url, research_interests, office_location, bio, qualifications, publications, specializations, conferences, publication_link, status_availability, user_id, created_at, updated_at";
 
 async function fetchStaff(): Promise<StaffMember[]> {
   const { data, error } = await supabase
@@ -143,7 +146,7 @@ export function useStaffProfile(id: string | undefined) {
       if (!id) return null;
       const { data, error } = await supabase
         .from("staff_members")
-        .select("id, name, faculty, department, email, rank, image_url, research_interests, office_location, bio, qualifications, publications, specializations, conferences, publication_link, status_availability, user_id, created_at, updated_at")
+        .select(PROFILE_SELECT_FIELDS)
         .eq("id", id)
         .maybeSingle();
 
@@ -151,5 +154,34 @@ export function useStaffProfile(id: string | undefined) {
       return data as StaffProfileData | null;
     },
     enabled: !!id,
+  });
+}
+
+export function useStaffProfileBySlug(
+  surname: string | undefined,
+  firstname: string | undefined,
+  middlename: string | undefined,
+  enabled = true
+) {
+  return useQuery<StaffProfileData | null>({
+    queryKey: ["staff-profile-slug", surname, firstname, middlename],
+    staleTime: STALE_TIME,
+    queryFn: async () => {
+      if (!surname || !firstname || !middlename) return null;
+
+      const requestedSlug = `${surname}/${firstname}/${middlename}`.toLowerCase();
+      const { data, error } = await supabase
+        .from("staff_members")
+        .select(PROFILE_SELECT_FIELDS);
+
+      if (error) throw error;
+
+      const matched = (data ?? []).find((row) => (
+        getStaffProfileSlug(row.name).toLowerCase() === requestedSlug
+      ));
+
+      return (matched as StaffProfileData | undefined) ?? null;
+    },
+    enabled: enabled && !!surname && !!firstname && !!middlename,
   });
 }

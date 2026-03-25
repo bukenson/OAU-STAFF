@@ -23,6 +23,7 @@ import { useIsAdmin } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
+import { sanitizeImageUrl } from "@/lib/sanitize";
 
 interface StaffRow {
   id: string;
@@ -227,8 +228,8 @@ const AdminDashboard = () => {
                           <tr key={s.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-3">
-                                {s.image_url ? (
-                                  <img src={s.image_url} alt="" className="w-8 h-8 rounded-full object-cover" />
+                                {sanitizeImageUrl(s.image_url ?? "") ? (
+                                  <img src={sanitizeImageUrl(s.image_url ?? "")} alt="" className="w-8 h-8 rounded-full object-cover" />
                                 ) : (
                                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                                     {s.name.charAt(0)}

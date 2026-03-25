@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { compressImage, validateImageFile } from "@/lib/compressImage";
+import { sanitizeEmailAddress, sanitizeImageUrl, sanitizeText } from "@/lib/sanitize";
 
 const ACADEMIC_RANKS = [
   "Graduate Assistant", "Assistant Lecturer", "Lecturer II", "Lecturer I",
@@ -105,18 +106,28 @@ export default function StaffForm({ staff, onSave, onCancel }: StaffFormProps) {
       return;
     }
     setSaving(true);
+    const sanitizedEmail = form.email.trim()
+      ? sanitizeEmailAddress(form.email)
+      : "";
+
+    if (form.email.trim() && !sanitizedEmail) {
+      toast({ title: "Invalid email", description: "Enter a valid email address.", variant: "destructive" });
+      setSaving(false);
+      return;
+    }
+
     const payload = {
-      name: form.name.trim(),
-      faculty: form.faculty.trim(),
-      department: form.department.trim(),
-      rank: form.rank.trim() || null,
-      email: form.email.trim() || null,
-      office_location: form.office_location.trim() || null,
-      bio: form.bio.trim() || null,
-      qualifications: form.qualifications.filter(Boolean).length > 0 ? form.qualifications.filter(Boolean) : null,
-      research_interests: form.research_interests.filter(Boolean).length > 0 ? form.research_interests.filter(Boolean) : null,
-      publications: form.publications.filter(Boolean).length > 0 ? form.publications.filter(Boolean) : null,
-      image_url: form.image_url || null,
+      name: sanitizeText(form.name),
+      faculty: sanitizeText(form.faculty),
+      department: sanitizeText(form.department),
+      rank: sanitizeText(form.rank) || null,
+      email: sanitizedEmail || null,
+      office_location: sanitizeText(form.office_location) || null,
+      bio: sanitizeText(form.bio) || null,
+      qualifications: form.qualifications.filter(Boolean).length > 0 ? form.qualifications.map((item) => sanitizeText(item)).filter(Boolean) : null,
+      research_interests: form.research_interests.filter(Boolean).length > 0 ? form.research_interests.map((item) => sanitizeText(item)).filter(Boolean) : null,
+      publications: form.publications.filter(Boolean).length > 0 ? form.publications.map((item) => sanitizeText(item)).filter(Boolean) : null,
+      image_url: sanitizeImageUrl(form.image_url) || null,
     };
 
     let error;

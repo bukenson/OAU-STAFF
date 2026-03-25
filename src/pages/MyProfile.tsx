@@ -18,7 +18,13 @@ import ArrayFieldSection from "@/components/profile/ArrayFieldSection";
 import ProfileLinksSection from "@/components/profile/ProfileLinksSection";
 import RichTextSection from "@/components/profile/RichTextSection";
 import ChipInput from "@/components/profile/ChipInput";
-import { sanitizeText, sanitizeUrl } from "@/lib/sanitize";
+import {
+  sanitizeImageUrl,
+  sanitizeOauEmailAddress,
+  sanitizeText,
+  sanitizeUrl,
+} from "@/lib/sanitize";
+import { getStaffProfilePath } from "@/lib/staffProfileUrl";
 
 const FACULTIES = [
   "Administration", "Agriculture", "Arts", "Basic Medical Sciences",
@@ -178,6 +184,20 @@ const MyProfile = () => {
     if (!user) return;
     setSaving(true);
 
+    const sanitizedEmail = form.email.trim()
+      ? sanitizeOauEmailAddress(form.email)
+      : "";
+
+    if (form.email.trim() && !sanitizedEmail) {
+      toast({
+        title: "Invalid email address",
+        description: "Use a valid @oauife.edu.ng email address.",
+        variant: "destructive",
+      });
+      setSaving(false);
+      return;
+    }
+
     const sanitizedLinks = form.publication_link
       .map(link => sanitizeUrl(link.trim()))
       .filter(Boolean);
@@ -185,21 +205,21 @@ const MyProfile = () => {
     const payload = {
       user_id: user.id,
       name: sanitizeText(form.name.trim()),
-      email: form.email.trim() || null,
+      email: sanitizedEmail || null,
       phone: form.phone.trim() || null,
-      faculty: form.faculty,
+      faculty: sanitizeText(form.faculty),
       department: sanitizeText(form.department.trim()),
       status_availability: form.status_availability || "Active",
-      rank: form.rank || null,
+      rank: sanitizeText(form.rank) || null,
       qualifications: form.qualifications.length ? form.qualifications.map(q => sanitizeText(q.trim())) : null,
       specializations: form.specializations.length ? form.specializations.map(s => sanitizeText(s.trim())) : null,
       publication_link: sanitizedLinks.length ? sanitizedLinks : null,
       research_interests: form.research_interests.length ? form.research_interests.map(r => sanitizeText(r.trim())) : null,
-      office_location: form.office_location.trim() || null,
+      office_location: sanitizeText(form.office_location) || null,
       bio: form.bio.trim() || null,
-      publications: form.publications.length ? form.publications : null,
-      conferences: form.conferences.length ? form.conferences : null,
-      image_url: form.image_url.trim() || null,
+      publications: form.publications.length ? form.publications.map(p => p.trim()).filter(Boolean) : null,
+      conferences: form.conferences.length ? form.conferences.map(c => c.trim()).filter(Boolean) : null,
+      image_url: sanitizeImageUrl(form.image_url) || null,
     };
 
     let error;
@@ -300,7 +320,11 @@ const MyProfile = () => {
               <div className="flex items-center justify-between">
                 {existingId && (
                   <Button variant="outline" size="sm" asChild>
-                    <a href={`/staff/${existingId}`} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={getStaffProfilePath({ id: existingId, name: form.name })}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <ExternalLink size={16} /> View Public Profile
                     </a>
                   </Button>
